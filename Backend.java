@@ -1,0 +1,154 @@
+import java.io.File;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+
+import java.io.IOException;
+
+import java.util.ArrayList;
+
+public class Backend {
+
+    static ArrayList<Data> data = new ArrayList<>();
+    static boolean loaded = false;
+    String path = "";
+
+    public Backend(String path) {
+        // Set backend file path on initialization
+        this.path = path;
+    }
+
+    private static void parse(String line) {
+        String[] args = line.split(",");
+
+        if (args.length == 3) {
+            String name = args[0];
+            String address = args[1];
+            String pricing = args[2];
+    
+            // Skipping invalid data entry
+            if (name == null || address == null || pricing == null) {
+                return;
+            }
+    
+            // name, address, pricing
+            Data resturant = new Data(name, address, pricing);
+            data.add(resturant);
+        }
+        
+    }
+
+    private static void read(String path) {
+
+        // File reading
+        try {
+            File file = new File(path);
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null) {
+                // File parsing
+                parse(line);
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public ArrayList<Data> getData() {
+        // Ensures the file isn't read twice
+        if (!loaded) {
+            read(this.path);
+            loaded = true;
+        }   
+
+        return data;
+    }
+
+    private void writeData(Data resturant) {
+        // File writing
+        try {
+            FileWriter fw = new FileWriter(this.path, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(resturant.getName() + "," + resturant.getAddress() + "," + resturant.getPricing() + "\n");
+            bw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addData(String name, String address, String pricing) {
+        Data resturant = new Data(name, address, pricing);
+        data.add(resturant);
+        writeData(resturant);
+    }
+
+    public void addData(Data resturant) {
+        data.add(resturant);
+        writeData(resturant);
+    }
+
+    public void editData(String name, boolean editAll, String newName, String newAddress, String newPricing) {
+
+        for (Data item : data) {
+            if (item.getName().equals(name)) {
+                item.setName(newName);
+                item.setAddress(newAddress);
+                item.setPricing(newPricing);
+                if (!editAll) {
+                    break;
+                }
+            }
+        }
+
+        try {
+            FileWriter fw = new FileWriter(this.path, false);
+            BufferedWriter bw = new BufferedWriter(fw);
+            data.forEach(item -> {
+                try {
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            bw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    
+    public void removeData(String name, boolean removeAll) {
+
+        for (Data item : data) {
+            if (item.getName().equals(name)) {
+                data.remove(item);
+                if (!removeAll) {
+                    break;
+                }
+            }
+        }
+
+        try {
+            FileWriter fw = new FileWriter(this.path, false);
+            BufferedWriter bw = new BufferedWriter(fw);
+            data.forEach(item -> {
+                try {
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            bw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+}
