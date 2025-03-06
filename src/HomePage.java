@@ -1,6 +1,6 @@
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 
 public class HomePage extends JFrame {
     private JMenuBar menu;
@@ -34,19 +34,13 @@ public class HomePage extends JFrame {
         JMenu options = new JMenu("Options");
 
         JMenuItem addButton = new JMenuItem("Add Restaurant");
-        JMenuItem removeButton = new JMenuItem("Remove Restaurant");
-        JMenuItem editButton = new JMenuItem("Edit Restaurant");
 
         options.add(addButton);
-        options.add(removeButton);
-        options.add(editButton);
 
         menu.add(options);
         this.setJMenuBar(menu);
 
         addButton.addActionListener(e -> addRestaurant());
-        removeButton.addActionListener(e -> removeRestaurant());
-        editButton.addActionListener(e -> editRestaurant());
 
         this.setVisible(true);
     }
@@ -58,15 +52,33 @@ public class HomePage extends JFrame {
         restaurantPanel.setMinimumSize(new Dimension(200, 200));
         restaurantPanel.setMaximumSize(new Dimension(200, 200));
         restaurantPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        restaurantPanel.setLayout(new GridLayout(3, 1));
+        restaurantPanel.setLayout(new BorderLayout());
 
         JLabel restName = new JLabel("Name: " + name);
         JLabel restAddress = new JLabel("Address: " + address);
         JLabel restPricing = new JLabel("Price Range: " + pricing);
 
-        restaurantPanel.add(restName);
-        restaurantPanel.add(restAddress);
-        restaurantPanel.add(restPricing);
+        JPanel editPanel = new JPanel(new BorderLayout());
+        JMenuBar menuBar = new JMenuBar();
+        JMenu dots = new JMenu("...");
+        JMenuItem updateButton = new JMenuItem("Update");
+        JMenuItem removeButton = new JMenuItem("Remove");
+        dots.add(updateButton);
+        dots.add(removeButton);
+        menuBar.add(dots);
+
+        removeButton.addActionListener(e -> removeRestaurant(restaurantPanel));
+        updateButton.addActionListener(e -> editRestaurant(restaurantPanel));
+
+        editPanel.add(menuBar, BorderLayout.LINE_END);
+
+        JPanel detailPanel = new JPanel(new GridLayout(3, 1));
+        detailPanel.add(restName);
+        detailPanel.add(restAddress);
+        detailPanel.add(restPricing);
+
+        restaurantPanel.add(editPanel, BorderLayout.PAGE_START);
+        restaurantPanel.add(detailPanel, BorderLayout.CENTER);
 
         this.constraints.gridx = totalRestaurants % 6;
         this.constraints.gridy = totalRestaurants / 6;
@@ -99,106 +111,53 @@ public class HomePage extends JFrame {
         createCard(name, address, pricing);
     }
 
-    public void removeRestaurant() {
-        if (totalRestaurants == 0) {
-            JOptionPane.showMessageDialog(this, "No restaurants to remove!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        String toRemove = JOptionPane.showInputDialog(this, "Enter restaurant name to remove (MUST BE EXACT)");
-        if (toRemove.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "You must enter a name!");
-            return;
-        }
+    public void removeRestaurant(JPanel restaurantPanel) {
+        JPanel component = (JPanel) restaurantPanel.getComponent(1);
+        JLabel nameLabel = (JLabel) component.getComponent(0);
 
-        this.backend.removeData(toRemove, false);
-
-        Component components[] = panel.getComponents();
-        for (Component x : components) {
-            if (x instanceof JPanel) {
-                JPanel tempPanel = (JPanel) x;
-                Component[] names = tempPanel.getComponents();
-
-                for (Component y : names) {
-                    if (y instanceof JLabel) {
-                        JLabel tempLabel = (JLabel) y;
-                        if (tempLabel.getText().equals("Name: " + toRemove)) {
-                            panel.remove(tempPanel);
-                            totalRestaurants -= 1;
-
-                            Component remainComponents[] = panel.getComponents();
-
-                            panel.removeAll();
-
-                            for (int i = 0; i < remainComponents.length; i++) {
-                                constraints.gridx = i % 6;
-                                constraints.gridy = i / 6;
-                                panel.add(remainComponents[i], constraints);
-                            }
-
-                            panel.revalidate();
-                            panel.repaint();
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-
-        JOptionPane.showMessageDialog(this, "Restaurant not found");
+        panel.remove(restaurantPanel);
+        totalRestaurants -= 1;
+        backend.removeData(nameLabel.getText().replace("Name: ", ""), false);
+        totalRestaurants -= 1;
+        panel.revalidate();
+        panel.repaint();
     }
 
-    public void editRestaurant() {
-        if (totalRestaurants == 0) {
-            JOptionPane.showMessageDialog(this, "No restaurants to edit!", "Error", JOptionPane.ERROR_MESSAGE);
+
+    public void editRestaurant(JPanel restaurantPanel) {
+        String type = JOptionPane.showInputDialog(this, "Which field would you like to edit? Name, Address or Pricing");
+        if (type.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Enter a field to change!");
             return;
         }
-        String toEdit = JOptionPane.showInputDialog(this, "Enter restaurant name to edit (MUST BE EXACT)");
-        String type = JOptionPane.showInputDialog(this, "Which field would you like to edit? Name, Address or Pricing");
-        String newField = JOptionPane.showInputDialog(this, "Enter new detail");
 
-        Component components[] = panel.getComponents();
-        for (Component x : components) {
-            if (x instanceof JPanel) {
-                JPanel tempPanel = (JPanel) x;
-                Component[] labels = tempPanel.getComponents();
-
-                JLabel nameLabel = null;
-                JLabel addressLabel = null;
-                JLabel priceLabel = null;
-
-                for (Component y : labels) {
-                    if (y instanceof JLabel) {
-                        JLabel tempLabel = (JLabel) y;
-                        if (tempLabel.getText().startsWith("Name: ")) {
-                            nameLabel = tempLabel;
-                        } else if (tempLabel.getText().startsWith("Address: ")) {
-                            addressLabel = tempLabel;
-                        } else if (tempLabel.getText().startsWith("Price Range: ")) {
-                            priceLabel = tempLabel;
-                        }
-                    }
-                }
-
-                if (nameLabel != null && nameLabel.getText().equals("Name: " + toEdit)) {
-                    if (type.equals("Name") || type.equals("name")) {
-                        nameLabel.setText("Name: " + newField);
-                        backend.editData(toEdit, false, newField, addressLabel.getText().substring(addressLabel.getText().indexOf(":") + 2), priceLabel.getText().substring(priceLabel.getText().indexOf(":") + 2));
-                    } else if (type.equals("Address") || type.equals("address")) {
-                        if (addressLabel != null) addressLabel.setText("Address: " + newField);
-                        backend.editData(toEdit, false, nameLabel.getText().substring(nameLabel.getText().indexOf(":") + 2), newField, priceLabel.getText().substring(priceLabel.getText().indexOf(":") + 2));
-                    } else if (type.equals("Pricing") || type.equals("pricing")) {
-                        if (priceLabel != null) priceLabel.setText("Price Range: " + newField);
-                        backend.editData(toEdit, false, nameLabel.getText().substring(nameLabel.getText().indexOf(":") + 2), addressLabel.getText().substring(addressLabel.getText().indexOf(":") + 2), newField);
-                    }
-
-                    panel.revalidate();
-                    panel.repaint();
-                    return;
-                }
-            }
+        String newField = JOptionPane.showInputDialog(this, "Enter new " + type);
+        if (newField.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "You must enter something!");
+            return;
         }
 
-        JOptionPane.showMessageDialog(this, "Restaurant not found");
+        JPanel component = (JPanel) restaurantPanel.getComponent(1);
+        JLabel nameLabel = (JLabel) component.getComponent(0);
+        JLabel addressLabel = (JLabel) component.getComponent(1);
+        JLabel pricingLabel = (JLabel) component.getComponent(2);
+        String oldName = nameLabel.getText().replace("Name: ", "");
+        String oldAddress = addressLabel.getText().replace("Address: ", "");
+        String oldPricing = pricingLabel.getText().replace("Price Range: ", "");
+
+        if (type.equals("name") || type.equals("Name")) {
+            nameLabel.setText("Name: " + newField);
+            backend.editData(oldName, false, newField, addressLabel.getText().replace("Address: ", ""), pricingLabel.getText().replace("Price Range: ", ""));
+        } else if (type.equals("address") || type.equals("Address")) {
+            addressLabel.setText("Address: " + newField);
+            backend.editData(oldName, false, oldName, newField, oldPricing);
+        } else if (type.equals("pricing") || type.equals("Pricing")) {
+            pricingLabel.setText("Price Range: " + newField);
+            backend.editData(oldName, false, oldName, oldAddress, newField);
+        }
+        System.out.println(nameLabel.getText());
+        panel.revalidate();
+        panel.repaint();
     }
 
     public static void main(String[] args) {
