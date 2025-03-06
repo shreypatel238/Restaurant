@@ -1,0 +1,10 @@
+.idea/
+target/
+build/
+
+# ignore folders build folders for JAR
+out/
+META-INF/
+
+# ignore MacOS meta file
+.DS_Store
