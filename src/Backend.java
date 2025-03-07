@@ -122,6 +122,47 @@ public class Backend {
         }
 
     }
+
+    public void register(String user, String password) {
+        try {
+            FileWriter fw = new FileWriter("./users.txt", true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(user + "," + password + "\n");
+            bw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean login(String user, String password) {
+        boolean loggedIn = false;
+        try {
+            FileReader fr = new FileReader("./users.txt");
+            BufferedReader br = new BufferedReader(fr);
+            String data;
+            while ((data = br.readLine()) != null) {
+                String[] userData = data.split(",");
+                if (userData[0].equals(user) && userData[1].equals(password)) {
+                    System.out.println("Login successful");
+                    loggedIn = true;
+                    break;
+                }
+            }
+            br.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return loggedIn;
+    }
+
+    public void logout() {
+        // Depends on the front end implementation
+    }
+
+
     
     public void removeData(String name, boolean removeAll) {
 
