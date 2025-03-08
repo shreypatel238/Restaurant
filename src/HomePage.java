@@ -1,6 +1,8 @@
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class HomePage extends JFrame {
     private JMenuBar menu;
@@ -32,12 +34,25 @@ public class HomePage extends JFrame {
 
         menu = new JMenuBar();
         JMenu options = new JMenu("Options");
-
         JMenuItem addButton = new JMenuItem("Add Restaurant");
-
         options.add(addButton);
 
+        JTextField searchBar = new JTextField("Search");
+        searchBar.setPreferredSize(new Dimension(200, 20));
+        searchBar.setMinimumSize(new Dimension(200, 20));
+        searchBar.setMaximumSize(new Dimension(200, 20));
+        searchBar.setBorder(BorderFactory.createLineBorder(Color.white));
+        searchBar.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                searchBar.setText("");
+            }
+        });
+
         menu.add(options);
+        menu.add(Box.createHorizontalGlue());
+        menu.add(searchBar);
+        menu.add(Box.createHorizontalGlue());
         this.setJMenuBar(menu);
 
         addButton.addActionListener(e -> addRestaurant());
