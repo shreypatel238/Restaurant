@@ -1,3 +1,4 @@
+// Restaurant class
 public class Data {
     private String name;
     private String address;

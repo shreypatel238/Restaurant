@@ -123,6 +123,7 @@ public class Backend {
 
     }
 
+    // takes in a username and password and stores it in a file to be used in account access
     public void register(String user, String password) {
         try {
             FileWriter fw = new FileWriter("./users.txt", true);
@@ -135,6 +136,7 @@ public class Backend {
         }
     }
 
+    // checks if the given username and password pair are within the users file, logging in if found
     public boolean login(String user, String password) {
         boolean loggedIn = false;
         try {
@@ -164,6 +166,7 @@ public class Backend {
 
 
     
+    // removes an item of String "name" from a file
     public void removeData(String name, boolean removeAll) {
 
         for (Data item : data) {
