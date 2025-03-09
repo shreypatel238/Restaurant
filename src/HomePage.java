@@ -92,8 +92,11 @@ public class HomePage extends JFrame {
         detailPanel.add(restAddress);
         detailPanel.add(restPricing);
 
+        JButton viewDetails = new JButton("View Details");
+
         restaurantPanel.add(editPanel, BorderLayout.PAGE_START);
         restaurantPanel.add(detailPanel, BorderLayout.CENTER);
+        restaurantPanel.add(viewDetails, BorderLayout.PAGE_END);
 
         this.constraints.gridx = totalRestaurants % 6;
         this.constraints.gridy = totalRestaurants / 6;
