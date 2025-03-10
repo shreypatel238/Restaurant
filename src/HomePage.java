@@ -63,17 +63,22 @@ public class HomePage extends JFrame {
 
     public void createCard(String name, String address, String pricing) {
         JPanel restaurantPanel = new JPanel();
-        restaurantPanel.setPreferredSize(new Dimension(200, 200));
-        restaurantPanel.setMinimumSize(new Dimension(200, 200));
-        restaurantPanel.setMaximumSize(new Dimension(200, 200));
+        restaurantPanel.setPreferredSize(new Dimension(300, 300));
+        restaurantPanel.setMinimumSize(new Dimension(300, 300));
+        restaurantPanel.setMaximumSize(new Dimension(300, 300));
         restaurantPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         restaurantPanel.setLayout(new BorderLayout());
+        restaurantPanel.setBackground(new Color(245, 224, 130));
 
-        JLabel restName = new JLabel("Name: " + name);
-        JLabel restAddress = new JLabel("Address: " + address);
-        JLabel restPricing = new JLabel("Price Range: " + pricing);
+        JLabel restName = new JLabel(name);
+        JLabel restPricing = new JLabel(pricing);
+        JLabel restAddress = new JLabel(address);
+        restName.setFont(new Font("", Font.BOLD, 25));
+        restAddress.setFont(new Font("", Font.BOLD, 15));
+        restPricing.setFont(new Font("", Font.BOLD, 20));
 
         JPanel editPanel = new JPanel(new BorderLayout());
+        editPanel.setBackground(new Color(245, 224, 130));
         JMenuBar menuBar = new JMenuBar();
         JMenu dots = new JMenu("...");
         JMenuItem updateButton = new JMenuItem("Update");
@@ -89,8 +94,9 @@ public class HomePage extends JFrame {
 
         JPanel detailPanel = new JPanel(new GridLayout(3, 1));
         detailPanel.add(restName);
-        detailPanel.add(restAddress);
         detailPanel.add(restPricing);
+        detailPanel.add(restAddress);
+        detailPanel.setBackground(new Color(245, 224, 130));
 
         JButton viewDetails = new JButton("View Details");
 
@@ -98,8 +104,10 @@ public class HomePage extends JFrame {
         restaurantPanel.add(detailPanel, BorderLayout.CENTER);
         restaurantPanel.add(viewDetails, BorderLayout.PAGE_END);
 
-        this.constraints.gridx = totalRestaurants % 6;
-        this.constraints.gridy = totalRestaurants / 6;
+        constraints = new GridBagConstraints();
+        constraints.insets = new Insets(10, 10, 10, 10);
+        this.constraints.gridx = totalRestaurants % 4;
+        this.constraints.gridy = totalRestaurants / 4;
 
         this.panel.add(restaurantPanel, this.constraints);
         totalRestaurants += 1;
@@ -136,11 +144,12 @@ public class HomePage extends JFrame {
         panel.remove(restaurantPanel);
         totalRestaurants -= 1;
         backend.removeData(nameLabel.getText().replace("Name: ", ""), false);
-        totalRestaurants -= 1;
+
+        refreshPage();
+
         panel.revalidate();
         panel.repaint();
     }
-
 
     public void editRestaurant(JPanel restaurantPanel) {
         String type = JOptionPane.showInputDialog(this, "Which field would you like to edit? Name, Address or Pricing");
@@ -176,6 +185,16 @@ public class HomePage extends JFrame {
         System.out.println(nameLabel.getText());
         panel.revalidate();
         panel.repaint();
+    }
+
+    public void refreshPage() {
+        panel.removeAll();
+        constraints = new GridBagConstraints();
+        constraints.insets = new Insets(10, 10, 10, 10);
+        totalRestaurants = 0;
+        backend.getData().forEach(item -> {
+            createCard(item.getName(), item.getAddress(), item.getPricing());
+        });
     }
 
     public static void main(String[] args) {
