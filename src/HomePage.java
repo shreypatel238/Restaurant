@@ -1,5 +1,4 @@
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -115,6 +114,8 @@ public class HomePage extends JFrame {
         panel.repaint();
     }
 
+    /*
+    //Old version of addRestaurant function, kept as reference
     public void addRestaurant() {
         String name = JOptionPane.showInputDialog(this, "Enter the restaurant name");
         if (name.trim().isEmpty()) {
@@ -135,6 +136,45 @@ public class HomePage extends JFrame {
         backend.addData(name, address, pricing); //Add to CSV
 
         createCard(name, address, pricing);
+    }
+    */
+
+    public void addRestaurant() {
+        JTextField nameField = new JTextField(20);
+        JTextField addressField = new JTextField(20);
+        JTextField pricingField = new JTextField(20);
+
+        JPanel enterPanel = new JPanel(new GridLayout(3, 2));
+        enterPanel.add(new JLabel("Enter Restaurant Name:"));
+        enterPanel.add(nameField);
+        enterPanel.add(new JLabel("Enter Restaurant Address:"));
+        enterPanel.add(addressField);
+        enterPanel.add(new JLabel("Enter Restaurant Price Range (Ex. $10-$100):"));
+        enterPanel.add(pricingField);
+
+        int entered = JOptionPane.showConfirmDialog(this, enterPanel, "Enter Restaurant Information", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+
+        if (entered == JOptionPane.OK_OPTION) {
+            String name = nameField.getText().trim();
+            if (name.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "You must enter a name!", "Restaurant Name", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            String address = addressField.getText().trim();
+            if (address.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "You must enter an address!", "Restaurant Address", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            String pricing = pricingField.getText().trim();
+            if (pricing.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "You must enter a price range!" ,"Restaurant Price", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            backend.addData(name, address, pricing); //Add to CSV
+
+            createCard(name, address, pricing);
+        }
     }
 
     public void removeRestaurant(JPanel restaurantPanel) {
