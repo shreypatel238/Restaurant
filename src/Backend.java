@@ -195,4 +195,19 @@ public class Backend {
         }
 
     }
+    //Returns a list of resturants (data) containing the filter
+    public ArrayList<Data> searchdata(String filter) {
+        ArrayList<Data> list = new ArrayList<Data>();
+        if(filter.equals(" ")) {
+            return list;
+
+        }else{
+            for (Data item : data) {
+                if (item.getName().contains(filter)) {
+                    list.add(item);
+                }
+            }
+            return list;
+        }
+    }
 }
