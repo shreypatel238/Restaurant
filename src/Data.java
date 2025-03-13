@@ -3,11 +3,13 @@ public class Data {
     private String name;
     private String address;
     private String pricing;
+    private String imagePath;
 
-    public Data(String name, String address, String pricing) {
+    public Data(String name, String address, String pricing, String imagePath) {
         this.name = name;
         this.address = address;
         this.pricing = pricing;
+        this.imagePath = imagePath;
     }
 
     public String getName() {
@@ -22,6 +24,8 @@ public class Data {
         return pricing;
     }
 
+    public String getImagePath() {return imagePath;}
+
     public void setName(String name) {
         this.name = name;
     }
@@ -33,4 +37,6 @@ public class Data {
     public void setPricing(String pricing) {
         this.pricing = pricing;
     }
+
+    public void setImagePath(String imagePath) {this.imagePath = imagePath;}
 }

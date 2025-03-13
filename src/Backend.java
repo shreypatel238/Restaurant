@@ -24,18 +24,19 @@ public class Backend {
     private static void parse(String line) {
         String[] args = line.split(",");
 
-        if (args.length == 3) {
+        if (args.length == 4) {
             String name = args[0];
             String address = args[1];
             String pricing = args[2];
+            String imagePath = args[3];
     
             // Skipping invalid data entry
-            if (name == null || address == null || pricing == null) {
+            if (name == null || address == null || pricing == null || imagePath == null) {
                 return;
             }
     
             // name, address, pricing
-            Data resturant = new Data(name, address, pricing);
+            Data resturant = new Data(name, address, pricing, imagePath);
             data.add(resturant);
         }
         
@@ -73,7 +74,7 @@ public class Backend {
         try {
             FileWriter fw = new FileWriter(this.path, true);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(resturant.getName() + "," + resturant.getAddress() + "," + resturant.getPricing() + "\n");
+            bw.write(resturant.getName() + "," + resturant.getAddress() + "," + resturant.getPricing() + "," + resturant.getImagePath() + "\n");
             bw.close();
         }
         catch (IOException e) {
@@ -81,8 +82,8 @@ public class Backend {
         }
     }
 
-    public void addData(String name, String address, String pricing) {
-        Data resturant = new Data(name, address, pricing);
+    public void addData(String name, String address, String pricing, String imagePath) {
+        Data resturant = new Data(name, address, pricing, imagePath);
         data.add(resturant);
         writeData(resturant);
     }
@@ -92,13 +93,14 @@ public class Backend {
         writeData(resturant);
     }
 
-    public void editData(String name, boolean editAll, String newName, String newAddress, String newPricing) {
+    public void editData(String name, boolean editAll, String newName, String newAddress, String newPricing, String newImagePath) {
 
         for (Data item : data) {
             if (item.getName().equals(name)) {
                 item.setName(newName);
                 item.setAddress(newAddress);
                 item.setPricing(newPricing);
+                item.setImagePath(newImagePath);
                 if (!editAll) {
                     break;
                 }
@@ -110,7 +112,7 @@ public class Backend {
             BufferedWriter bw = new BufferedWriter(fw);
             data.forEach(item -> {
                 try {
-                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "\n");
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "\n");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -183,7 +185,7 @@ public class Backend {
             BufferedWriter bw = new BufferedWriter(fw);
             data.forEach(item -> {
                 try {
-                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "\n");
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "\n");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

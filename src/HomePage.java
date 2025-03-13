@@ -1,7 +1,13 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class HomePage extends JFrame {
     private JMenuBar menu;
@@ -24,7 +30,7 @@ public class HomePage extends JFrame {
 
         this.backend = new Backend("./data.csv");
         backend.getData().forEach(item -> {
-            createCard(item.getName(), item.getAddress(), item.getPricing());
+            createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
         });
 
         JScrollPane scrollPane = new JScrollPane(panel);
@@ -54,13 +60,19 @@ public class HomePage extends JFrame {
         menu.add(Box.createHorizontalGlue());
         this.setJMenuBar(menu);
 
-        addButton.addActionListener(e -> addRestaurant());
+        addButton.addActionListener(e -> {
+            try {
+                addRestaurant();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
 
         this.setVisible(true);
     }
 
 
-    public void createCard(String name, String address, String pricing) {
+    public void createCard(String name, String address, String pricing, File image) {
         JPanel restaurantPanel = new JPanel();
         restaurantPanel.setPreferredSize(new Dimension(300, 300));
         restaurantPanel.setMinimumSize(new Dimension(300, 300));
@@ -72,6 +84,19 @@ public class HomePage extends JFrame {
         JLabel restName = new JLabel(name);
         JLabel restPricing = new JLabel(pricing);
         JLabel restAddress = new JLabel(address);
+        JLabel restImage;
+        if (image != null) {
+            try {
+                BufferedImage img = ImageIO.read(image);
+                ImageIcon icon = new ImageIcon(img.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+                restImage = new JLabel(icon);
+            } catch (IOException e) {
+                restImage = new JLabel("Image load failed");
+            }
+        } else {
+            restImage = new JLabel("No Image");
+        }
+
         restName.setFont(new Font("", Font.BOLD, 25));
         restAddress.setFont(new Font("", Font.BOLD, 15));
         restPricing.setFont(new Font("", Font.BOLD, 20));
@@ -91,7 +116,8 @@ public class HomePage extends JFrame {
 
         editPanel.add(menuBar, BorderLayout.LINE_END);
 
-        JPanel detailPanel = new JPanel(new GridLayout(3, 1));
+        JPanel detailPanel = new JPanel(new GridLayout(4, 1));
+        detailPanel.add(restImage);
         detailPanel.add(restName);
         detailPanel.add(restPricing);
         detailPanel.add(restAddress);
@@ -139,18 +165,35 @@ public class HomePage extends JFrame {
     }
     */
 
-    public void addRestaurant() {
+    public void addRestaurant() throws IOException {
         JTextField nameField = new JTextField(20);
         JTextField addressField = new JTextField(20);
         JTextField pricingField = new JTextField(20);
+        String[] imagePath = {""};
 
-        JPanel enterPanel = new JPanel(new GridLayout(3, 2));
+        JPanel enterPanel = new JPanel(new GridLayout(4, 2));
         enterPanel.add(new JLabel("Enter Restaurant Name:"));
         enterPanel.add(nameField);
         enterPanel.add(new JLabel("Enter Restaurant Address:"));
         enterPanel.add(addressField);
         enterPanel.add(new JLabel("Enter Restaurant Price Range (Ex. $10-$100):"));
         enterPanel.add(pricingField);
+        enterPanel.add(new JLabel("Select an image"));
+        JButton selectButton = new JButton("Select");
+
+        selectButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            FileFilter filter = new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes());
+            fileChooser.setFileFilter(filter);
+            fileChooser.setCurrentDirectory(new File("."));
+
+            int returnValue = fileChooser.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File imageFile = fileChooser.getSelectedFile();
+                imagePath[0] = imageFile.getAbsolutePath();
+            }
+        });
+        enterPanel.add(selectButton);
 
         int entered = JOptionPane.showConfirmDialog(this, enterPanel, "Enter Restaurant Information", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
@@ -171,15 +214,15 @@ public class HomePage extends JFrame {
                 return;
             }
 
-            backend.addData(name, address, pricing); //Add to CSV
+            backend.addData(name, address, pricing, imagePath[0]); //Add to CSV
 
-            createCard(name, address, pricing);
+            createCard(name, address, pricing, new File(imagePath[0]));
         }
     }
 
     public void removeRestaurant(JPanel restaurantPanel) {
         JPanel component = (JPanel) restaurantPanel.getComponent(1);
-        JLabel nameLabel = (JLabel) component.getComponent(0);
+        JLabel nameLabel = (JLabel) component.getComponent(1);
 
         panel.remove(restaurantPanel);
         totalRestaurants -= 1;
@@ -192,37 +235,68 @@ public class HomePage extends JFrame {
     }
 
     public void editRestaurant(JPanel restaurantPanel) {
-        String type = JOptionPane.showInputDialog(this, "Which field would you like to edit? Name, Address or Pricing");
-        if (type.trim().isEmpty()) {
+        String type = JOptionPane.showInputDialog(this, "Which field would you like to edit? Name, Address, Pricing, or Image");
+        if (type == null || type.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Enter a field to change!");
             return;
         }
 
-        String newField = JOptionPane.showInputDialog(this, "Enter new " + type);
-        if (newField.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "You must enter something!");
-            return;
+        String newField = "";
+        if (!type.equals("image") && !type.equals("Image")) {
+            newField = JOptionPane.showInputDialog(this, "Enter new " + type);
+            if (newField.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "You must enter something!");
+                return;
+            }
         }
 
         JPanel component = (JPanel) restaurantPanel.getComponent(1);
-        JLabel nameLabel = (JLabel) component.getComponent(0);
-        JLabel addressLabel = (JLabel) component.getComponent(1);
-        JLabel pricingLabel = (JLabel) component.getComponent(2);
+        JLabel nameLabel = (JLabel) component.getComponent(1);
+        JLabel addressLabel = (JLabel) component.getComponent(2);
+        JLabel pricingLabel = (JLabel) component.getComponent(3);
+        JLabel imageLabel = (JLabel) component.getComponent(0);
         String oldName = nameLabel.getText().replace("Name: ", "");
         String oldAddress = addressLabel.getText().replace("Address: ", "");
         String oldPricing = pricingLabel.getText().replace("Price Range: ", "");
+        String oldPath = imageLabel.getText();
 
         if (type.equals("name") || type.equals("Name")) {
-            nameLabel.setText("Name: " + newField);
-            backend.editData(oldName, false, newField, addressLabel.getText().replace("Address: ", ""), pricingLabel.getText().replace("Price Range: ", ""));
+            nameLabel.setText(newField);
+            backend.editData(oldName, false, newField, oldAddress, oldPricing, oldPath);
         } else if (type.equals("address") || type.equals("Address")) {
-            addressLabel.setText("Address: " + newField);
-            backend.editData(oldName, false, oldName, newField, oldPricing);
+            addressLabel.setText(newField);
+            backend.editData(oldName, false, oldName, newField, oldPricing, oldPath);
         } else if (type.equals("pricing") || type.equals("Pricing")) {
-            pricingLabel.setText("Price Range: " + newField);
-            backend.editData(oldName, false, oldName, oldAddress, newField);
+            pricingLabel.setText(newField);
+            backend.editData(oldName, false, oldName, oldAddress, newField, oldPath);
+        } else if (type.equals("image") || type.equals("Image")) {
+            String[] imagePath = {""};
+            JFileChooser fileChooser = new JFileChooser();
+            FileFilter filter = new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes());
+            fileChooser.setFileFilter(filter);
+            fileChooser.setCurrentDirectory(new File("."));
+            File imageFile = null;
+
+            int returnValue = fileChooser.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                imageFile = fileChooser.getSelectedFile();
+                imagePath[0] = imageFile.getAbsolutePath();
+            }
+
+            if (imageFile != null) {
+                try {
+                    BufferedImage img = ImageIO.read(imageFile);
+                    ImageIcon icon = new ImageIcon(img.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+                    imageLabel.setIcon(icon);
+                    imageLabel.setText(null);
+                    backend.editData(oldName, false, oldName, oldAddress, oldPricing, imagePath[0]);
+                } catch (IOException e) {
+                    imageLabel = new JLabel("Image load failed");
+                }
+            } else {
+                imageLabel = new JLabel("No Image");
+            }
         }
-        System.out.println(nameLabel.getText());
         panel.revalidate();
         panel.repaint();
     }
@@ -233,7 +307,7 @@ public class HomePage extends JFrame {
         constraints.insets = new Insets(10, 10, 10, 10);
         totalRestaurants = 0;
         backend.getData().forEach(item -> {
-            createCard(item.getName(), item.getAddress(), item.getPricing());
+            createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
         });
     }
 
