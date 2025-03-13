@@ -8,12 +8,12 @@ import org.junit.*;
 public class TestBackend {
     
     String testPath = "./Restaurant/mirror/testBackend.csv";
-    Data testData1 = new Data("McDonalds","100 Mc Way","$10-$20","C:\\Users\\joshu\\Downloads\\mcd.png");
-    Data testData2 = new Data("Subway", "100 Sub Way","$10", "C:\\Users\\joshu\\Downloads\\subway.jpg");
+    Data testData1 = new Data("McDonalds","100 Mc Way","$10-$20","image.png");
+    Data testData2 = new Data("Subway", "100 Sub Way","$10", "image.jpg");
     String testName = "McDonalds";
     String testAddress = "123 Sesame Street"; 
     String testPricing = "$10-$20";
-    String testImagePath = "C:\\Users\\joshu\\Downloads\\mcd.png";
+    String testImagePath = "image.png";
     
 
     @Test
