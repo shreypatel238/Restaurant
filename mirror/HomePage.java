@@ -1,5 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -8,6 +9,10 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
 
 public class HomePage extends JFrame {
     private JMenuBar menu;
@@ -47,6 +52,29 @@ public class HomePage extends JFrame {
         searchBar.setMinimumSize(new Dimension(200, 20));
         searchBar.setMaximumSize(new Dimension(200, 20));
         searchBar.setBorder(BorderFactory.createLineBorder(Color.white));
+
+
+        searchBar.getDocument().addDocumentListener(new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                    onTextChange();
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                    onTextChange();
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                    onTextChange();
+                }
+
+                private void onTextChange() {
+                    System.out.println("Text changed: " + searchBar.getText());
+                }
+            });
+
         searchBar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
