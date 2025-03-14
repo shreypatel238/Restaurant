@@ -14,6 +14,7 @@ public class Backend {
 
     static ArrayList<Data> data = new ArrayList<>();
     static ArrayList<Data> altData = new ArrayList<>();
+    static ArrayList<User> users = new ArrayList<>();
     static boolean loaded = false;
     String search = "";
     String path = "";
@@ -21,6 +22,7 @@ public class Backend {
     public Backend(String path) {
         // Set backend file path on initialization
         this.path = path;
+        this.readUsers("./users.csv");
     }
 
     private static void parse(String line) {
@@ -138,12 +140,54 @@ public class Backend {
 
     }
 
-    // takes in a username and password and stores it in a file to be used in account access
-    public void register(String user, String password) {
+    // Parse users file
+    private void parseUser(String line) {
+        String[] args = line.split(",");
+
+        if (args.length == 3) {
+            String username = args[0];
+            String password = args[1];
+            int level = Integer.parseInt(args[2]);
+
+            // Skipping invalid data entry
+            if (username == null || password == null) {
+                return;
+            }
+
+            // Username, password, level
+            User user = new User(username, password, level);
+            users.add(user);
+        }
+    }
+
+
+    public void readUsers(String path) {
+        // File reading
         try {
-            FileWriter fw = new FileWriter("./users.txt", true);
+            File file = new File(path);
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null) {
+                // File parsing
+                parseUser(line);
+            }
+            br.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void update() {
+        try {
+            FileWriter fw = new FileWriter("./users.csv", false);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(user + "," + password + "\n");
+            users.forEach(user -> {
+                try {
+                    bw.write(user.getUsername() + "," + user.getPassword() + "," + user.getLevel() + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
             bw.close();
         }
         catch (IOException e) {
@@ -151,28 +195,31 @@ public class Backend {
         }
     }
 
-    // checks if the given username and password pair are within the users file, logging in if found
-    public boolean login(String user, String password) {
-        boolean loggedIn = false;
-        try {
-            FileReader fr = new FileReader("./users.txt");
-            BufferedReader br = new BufferedReader(fr);
-            String data;
-            while ((data = br.readLine()) != null) {
-                String[] userData = data.split(",");
-                if (userData[0].equals(user) && userData[1].equals(password)) {
-                    System.out.println("Login successful");
-                    loggedIn = true;
-                    break;
-                }
+    // takes in a username and password and stores it in a file to be used in account access
+    public boolean register(String user, String password) {
+        for (User item : users) {
+            if (item.getUsername().equals(user)) {
+                return false;
             }
-            br.close();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
         }
 
-        return loggedIn;
+        User newUser = new User(user, password, 1);
+        users.add(newUser);
+        update();
+
+        return true;
+    }
+
+    // checks if the given username and password pair are within the users file, logging in if found
+    public boolean login(String user, String password) {
+        
+        for (User item : users) {
+            if (item.getUsername().equals(user) && item.getPassword().equals(password)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public void logout() {
