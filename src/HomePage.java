@@ -379,6 +379,48 @@ public class HomePage extends JFrame {
         }
     }
 
+    public void showLoginPage() {
+        JFrame frame = new JFrame();
+        frame.setSize(400, 400);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setLocationRelativeTo(this);
+
+        JPanel page = new JPanel();
+
+        JPanel registerPanel = new JPanel();
+        registerPanel.setLayout(new GridLayout(3, 2));
+
+        JLabel createName = new JLabel("Create a username: ");
+        JTextField createNameField = new JTextField();
+        JLabel createPass = new JLabel("Create a password: ");
+        JTextField createPassField = new JTextField();
+        JButton registerButton = new JButton("Register");
+        registerPanel.add(createName);
+        registerPanel.add(createNameField);
+        registerPanel.add(createPass);
+        registerPanel.add(createPassField);
+        registerPanel.add(registerButton);
+
+        JPanel loginPanel = new JPanel();
+        loginPanel.setLayout(new GridLayout(3, 2));
+
+        JLabel enterName = new JLabel("Enter username: ");
+        JTextField enterNameField = new JTextField();
+        JLabel enterPass = new JLabel("Enter password: ");
+        JTextField enterPassField = new JTextField();
+        JButton loginButton = new JButton("Login");
+        loginPanel.add(enterName);
+        loginPanel.add(enterNameField);
+        loginPanel.add(enterPass);
+        loginPanel.add(enterPassField);
+        loginPanel.add(loginButton);
+
+        page.add(registerPanel);
+        page.add(loginPanel);
+        frame.add(page);
+        frame.setVisible(true);
+    }
+
     public static void main(String[] args) {
         HomePage homepage = new HomePage();
     }
