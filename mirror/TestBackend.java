@@ -15,12 +15,13 @@ public class TestBackend {
     String testPricing = "$10-$20";
     String testImagePath = "image.png";
     
-
+    // Tests that a "Backend" Object can be created using its parameterized constructor
     @Test
     public void testBackendCreation() {
         Backend backend = new Backend(testPath);
     }
 
+    // Tests that adding a restaurant to the backend fits the expected format
     @Test
     public void testBackendAddData() {
         ArrayList<Data> testData = new ArrayList<>();
@@ -38,6 +39,7 @@ public class TestBackend {
         backend.removeData(testData2.getName(), false);
     }
 
+    // Tests that when the "editData()" function is called, the changed values match what is expected
     @Test
     public void testBackendEditData() {
         Data expected = new Data(testName, testAddress, testPricing, testImagePath);
@@ -55,6 +57,7 @@ public class TestBackend {
         backend.removeData(testName, false);
     }
 
+    // Tests that the removal of restaurants from the backend works as expected
     @Test
     public void testBackendRemoveData() {
         Backend backend = new Backend(testPath);

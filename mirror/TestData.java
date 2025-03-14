@@ -6,13 +6,15 @@ public class TestData {
     String testName = "McDonalds";
     String testAddress = "123 Sesame Street"; 
     String testPricing = "$10-$20";
-    String testImagePath = "C:\\Users\\joshu\\Downloads\\mcd.png";
+    String testImagePath = "Image/path";
 
+    //Tests that a "Data" Object can be created using its paramaterized constructor
     @Test
     public void testCreateData() {
         Data data = new Data("name", "address", "pricing", "path");
     }
 
+    // Tests the getters and setters for the "Data" class
     @Test
     public void testDataInformation() {
         Data data = new Data("name", "address", "pricing", "path");
