@@ -17,6 +17,7 @@ public class HomePage extends JFrame {
     private GridBagConstraints constraints;
     private int totalRestaurants = 0;
     private Backend backend;
+    private String currentSearch;
 
     public HomePage() {
         this.setTitle("Restaurant Catalog");
@@ -63,7 +64,7 @@ public class HomePage extends JFrame {
                         backend.searchdata(search);
                         refreshPage();
                     }
-
+                    currentSearch = search;
                     panel.revalidate();
                     panel.repaint();
                 }
@@ -106,6 +107,8 @@ public class HomePage extends JFrame {
                 BufferedImage img = ImageIO.read(image);
                 ImageIcon icon = new ImageIcon(img.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
                 restImage = new JLabel(icon);
+//                System.out.println(image.getAbsolutePath());
+                restImage.putClientProperty("imagePath", image.getAbsolutePath());
             } catch (IOException e) {
                 restImage = new JLabel("Image load failed");
             }
@@ -206,7 +209,7 @@ public class HomePage extends JFrame {
             int returnValue = fileChooser.showOpenDialog(null);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File imageFile = fileChooser.getSelectedFile();
-                imagePath[0] = imageFile.getAbsolutePath();
+                imagePath[0] =imageFile.getAbsolutePath();
             }
         });
         enterPanel.add(selectButton);
@@ -274,7 +277,7 @@ public class HomePage extends JFrame {
         String oldName = nameLabel.getText().replace("Name: ", "");
         String oldAddress = addressLabel.getText().replace("Address: ", "");
         String oldPricing = pricingLabel.getText().replace("Price Range: ", "");
-        String oldPath = imageLabel.getText();
+        String oldPath = (String) imageLabel.getClientProperty("imagePath");
 
         if (type.equals("name") || type.equals("Name")) {
             nameLabel.setText(newField);
@@ -296,7 +299,7 @@ public class HomePage extends JFrame {
             int returnValue = fileChooser.showOpenDialog(null);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 imageFile = fileChooser.getSelectedFile();
-                imagePath[0] = imageFile.getPath();
+                imagePath[0] = imageFile.getAbsolutePath();
             }
 
             if (imageFile != null) {
@@ -305,6 +308,7 @@ public class HomePage extends JFrame {
                     ImageIcon icon = new ImageIcon(img.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
                     imageLabel.setIcon(icon);
                     imageLabel.setText(null);
+                    imageLabel.putClientProperty("imagePath", imagePath[0]);
                     backend.editData(oldName, false, oldName, oldAddress, oldPricing, imagePath[0]);
                 } catch (IOException e) {
                     imageLabel = new JLabel("Image load failed");
@@ -322,8 +326,7 @@ public class HomePage extends JFrame {
         constraints = new GridBagConstraints();
         constraints.insets = new Insets(10, 10, 10, 10);
         totalRestaurants = 0;
-        System.out.println(backend.getAltData().size());
-        if(!(backend.getAltData().isEmpty())) {
+        if(!(backend.getAltData().isEmpty())&&(backend.getSearch().equals(currentSearch))) {
             backend.getAltData().forEach(item -> {
                 createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
             });

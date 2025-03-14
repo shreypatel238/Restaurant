@@ -15,6 +15,7 @@ public class Backend {
     static ArrayList<Data> data = new ArrayList<>();
     static ArrayList<Data> altData = new ArrayList<>();
     static boolean loaded = false;
+    String search = "";
     String path = "";
 
     public Backend(String path) {
@@ -216,8 +217,14 @@ public class Backend {
             for (Data item : data) {
                 if (item.getName().contains(filter)&&!altData.contains(item)) {
                     altData.add(item);
+
                 }
             }
+            search = filter;
+        }
+        if (filter.isEmpty()) {
+            altData.clear();
+            search = null;
         }
     }
 
@@ -227,5 +234,9 @@ public class Backend {
 
     public static ArrayList<Data> getAltData() {
         return altData;
+    }
+
+    public String getSearch() {
+        return search;
     }
 }
