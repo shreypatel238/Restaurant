@@ -215,9 +215,10 @@ public class Backend {
     public void searchdata(String filter) {
         if(!filter.isEmpty()) {
             for (Data item : data) {
-                if (item.getName().contains(filter)&&!altData.contains(item)) {
-                    altData.add(item);
-
+                for(String word : item.getName().split(" ")) {
+                    if (word.startsWith(filter) && !altData.contains(item)) {
+                        altData.add(item);
+                    }
                 }
             }
             search = filter;
