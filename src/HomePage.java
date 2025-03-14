@@ -45,6 +45,7 @@ public class HomePage extends JFrame {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         this.add(scrollPane);
 
+        //Creates JMenuBar and sets lauout. Adds a button to add restaurants and creates a margin using horizontal glue and adds it to menu
         menu = new JMenuBar();
         menu.setLayout(new BoxLayout(menu, BoxLayout.X_AXIS));
         JMenuItem addButton = new JMenuItem("Add Restaurant");
@@ -52,6 +53,7 @@ public class HomePage extends JFrame {
         menu.add(addButton);
         menu.add(Box.createHorizontalGlue());
 
+        //Creates a search bar, sets size, and adds to menu
         JTextField searchBar = new JTextField("Search");
         searchBar.setPreferredSize(new Dimension(200, 30));
         searchBar.setMinimumSize(new Dimension(200, 30));
@@ -63,6 +65,7 @@ public class HomePage extends JFrame {
         searchBar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                //At first, the default text in the search bar is "search". If user clicks on it, the search text will disappear
                 String search = searchBar.getText();
                 if((searchBar.getText().equals("Search"))) {
                     searchBar.setText("");
@@ -118,6 +121,7 @@ public class HomePage extends JFrame {
 
         this.setJMenuBar(menu);
 
+        //Adds functionality to the add restaurants button. Calls addRestaurant when pressed
         addButton.addActionListener(e -> {
             try {
                 addRestaurant();
@@ -129,8 +133,9 @@ public class HomePage extends JFrame {
         this.setVisible(true);
     }
 
-
+    //Creates a card where the restaurant information will be displayed. Takes in a name, address, pricing, and image file
     public void createCard(String name, String address, String pricing, File image) {
+        //Creates main JPanel for the card. Sets size, border, layout and background colour
         JPanel restaurantPanel = new JPanel();
         restaurantPanel.setPreferredSize(new Dimension(300, 300));
         restaurantPanel.setMinimumSize(new Dimension(300, 300));
@@ -139,10 +144,13 @@ public class HomePage extends JFrame {
         restaurantPanel.setLayout(new BorderLayout());
         restaurantPanel.setBackground(new Color(245, 224, 130));
 
+        //Creates JLabels and assigns them their respective names from function parameters
         JLabel restName = new JLabel(name);
         JLabel restPricing = new JLabel(pricing);
         JLabel restAddress = new JLabel(address);
         JLabel restImage;
+
+        //Creates an ImageIcon from the image file, and assigns it to the restImage JLabel. Also attaches the path to the JLabel as well
         if (image != null) {
             try {
                 BufferedImage img = ImageIO.read(image);
@@ -157,13 +165,16 @@ public class HomePage extends JFrame {
             restImage = new JLabel("No Image");
         }
 
+        //sets font of the text
         restName.setFont(new Font("", Font.BOLD, 25));
         restAddress.setFont(new Font("", Font.BOLD, 15));
         restPricing.setFont(new Font("", Font.BOLD, 20));
 
+        //Creates a panel dedicated to the edit button
         JPanel editPanel = new JPanel(new BorderLayout());
         editPanel.setBackground(new Color(245, 224, 130));
         JMenuBar menuBar = new JMenuBar();
+        //Creates a JMenu item and assigns to JMenuItem's to it: update and remove
         JMenu dots = new JMenu("...");
         JMenuItem updateButton = new JMenuItem("Update");
         JMenuItem removeButton = new JMenuItem("Remove");
@@ -171,11 +182,14 @@ public class HomePage extends JFrame {
         dots.add(removeButton);
         menuBar.add(dots);
 
+        //When clicked, the remove and update buttons will run their respective functions
         removeButton.addActionListener(e -> removeRestaurant(restaurantPanel));
         updateButton.addActionListener(e -> editRestaurant(restaurantPanel));
 
+        //adds it to the right side of the panel
         editPanel.add(menuBar, BorderLayout.LINE_END);
 
+        //Creates panel for the details of the restaurant and adds the JLabels
         JPanel detailPanel = new JPanel(new GridLayout(4, 1));
         detailPanel.add(restImage);
         detailPanel.add(restName);
@@ -183,17 +197,22 @@ public class HomePage extends JFrame {
         detailPanel.add(restAddress);
         detailPanel.setBackground(new Color(245, 224, 130));
 
+        //Adds button for viewing details
         JButton viewDetails = new JButton("View Details");
 
+        //adds all panels to main panel
         restaurantPanel.add(editPanel, BorderLayout.PAGE_START);
         restaurantPanel.add(detailPanel, BorderLayout.CENTER);
         restaurantPanel.add(viewDetails, BorderLayout.PAGE_END);
 
+        //Refreshes constraints for the cards so everything works fine
         constraints = new GridBagConstraints();
         constraints.insets = new Insets(10, 10, 10, 10);
+        //makes it so four cards max will fit in a row, after that they will move to a new row
         this.constraints.gridx = totalRestaurants % 4;
         this.constraints.gridy = totalRestaurants / 4;
 
+        //adds to main JFrame with constraints. Adds one to restaurant counter, and refreshes and repaints the panel
         this.panel.add(restaurantPanel, this.constraints);
         totalRestaurants += 1;
         panel.revalidate();
@@ -225,12 +244,15 @@ public class HomePage extends JFrame {
     }
     */
 
+    //Gathers restaurant details for card creation
     public void addRestaurant() throws IOException {
+        //Creates fields for the details
         JTextField nameField = new JTextField(20);
         JTextField addressField = new JTextField(20);
         JTextField pricingField = new JTextField(20);
         String[] imagePath = {""};
 
+        //Creates a panel for a dialog box and adds respective JLabels and textfields and buttons
         JPanel enterPanel = new JPanel(new GridLayout(4, 2));
         enterPanel.add(new JLabel("Enter Restaurant Name:"));
         enterPanel.add(nameField);
@@ -241,7 +263,9 @@ public class HomePage extends JFrame {
         enterPanel.add(new JLabel("Select an image"));
         JButton selectButton = new JButton("Select");
 
+        //Adds functionality to select button for image adding
         selectButton.addActionListener(e -> {
+            //Asks user to select an image file to enter
             JFileChooser fileChooser = new JFileChooser();
             FileFilter filter = new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes());
             fileChooser.setFileFilter(filter);
@@ -249,14 +273,17 @@ public class HomePage extends JFrame {
 
             int returnValue = fileChooser.showOpenDialog(null);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
+                //Gets file and file path of the image the user selected
                 File imageFile = fileChooser.getSelectedFile();
                 imagePath[0] =imageFile.getAbsolutePath();
             }
         });
         enterPanel.add(selectButton);
 
+        //Creates JOptionPane containing the enterPanel
         int entered = JOptionPane.showConfirmDialog(this, enterPanel, "Enter Restaurant Information", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
+        //gets the values of the textfields and checks if they are empty or not
         if (entered == JOptionPane.OK_OPTION) {
             String name = nameField.getText().trim();
             if (name.isEmpty()) {
@@ -274,8 +301,10 @@ public class HomePage extends JFrame {
                 return;
             }
 
+            //adds data to the csv for future use
             backend.addData(name, address, pricing, imagePath[0]); //Add to CSV
 
+            //runs createCard function to create the actual card
             createCard(name, address, pricing, new File(imagePath[0]));
         }
     }
@@ -379,17 +408,22 @@ public class HomePage extends JFrame {
         }
     }
 
+    //Function to display login page
     public void showLoginPage() {
+        //Creates JFrame
         JFrame frame = new JFrame();
         frame.setSize(400, 400);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setLocationRelativeTo(this);
 
+        //Creates main JPanel
         JPanel page = new JPanel();
 
+        //Creates JPanel for registering and sets gridlayout
         JPanel registerPanel = new JPanel();
         registerPanel.setLayout(new GridLayout(3, 2));
 
+        //Creates JLabels and JTextFields
         JLabel createName = new JLabel("Create a username: ");
         JTextField createNameField = new JTextField();
         JLabel createPass = new JLabel("Create a password: ");
@@ -401,9 +435,11 @@ public class HomePage extends JFrame {
         registerPanel.add(createPassField);
         registerPanel.add(registerButton);
 
+        //Creates loginPanel and sets GridLayout
         JPanel loginPanel = new JPanel();
         loginPanel.setLayout(new GridLayout(3, 2));
 
+        //Creates JLabels and JTextFields
         JLabel enterName = new JLabel("Enter username: ");
         JTextField enterNameField = new JTextField();
         JLabel enterPass = new JLabel("Enter password: ");
@@ -415,6 +451,7 @@ public class HomePage extends JFrame {
         loginPanel.add(enterPassField);
         loginPanel.add(loginButton);
 
+        //Adds to main JPanel and main JFrame
         page.add(registerPanel);
         page.add(loginPanel);
         frame.add(page);
