@@ -309,27 +309,35 @@ public class HomePage extends JFrame {
         }
     }
 
+    //function to remove a card
     public void removeRestaurant(JPanel restaurantPanel) {
+        //gets the JPanel and JLabels of the card
         JPanel component = (JPanel) restaurantPanel.getComponent(1);
         JLabel nameLabel = (JLabel) component.getComponent(1);
 
+        //removes the card and substracts 1 restaurant. Also removes the data from the database
         panel.remove(restaurantPanel);
         totalRestaurants -= 1;
         backend.removeData(nameLabel.getText().replace("Name: ", ""), false);
 
+        //runs refreshPage function
         refreshPage();
 
+        //recalculates and repaints the screen
         panel.revalidate();
         panel.repaint();
     }
 
+    //edits restaurant data
     public void editRestaurant(JPanel restaurantPanel) {
+        //asks what field the user wants to change and checks if its empty or not
         String type = JOptionPane.showInputDialog(this, "Which field would you like to edit? Name, Address, Pricing, or Image");
         if (type == null || type.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Enter a field to change!");
             return;
         }
 
+        //If the user does not want to change the image, asks the user for the new value they want to set it to
         String newField = "";
         if (!type.equals("image") && !type.equals("Image")) {
             newField = JOptionPane.showInputDialog(this, "Enter new " + type);
@@ -339,16 +347,20 @@ public class HomePage extends JFrame {
             }
         }
 
+        //gets the JPanel data
         JPanel component = (JPanel) restaurantPanel.getComponent(1);
+        //gets all JLabel data so the text can be extracted
         JLabel nameLabel = (JLabel) component.getComponent(1);
         JLabel addressLabel = (JLabel) component.getComponent(2);
         JLabel pricingLabel = (JLabel) component.getComponent(3);
         JLabel imageLabel = (JLabel) component.getComponent(0);
+        //Stores JLabel values into variables
         String oldName = nameLabel.getText().replace("Name: ", "");
         String oldAddress = addressLabel.getText().replace("Address: ", "");
         String oldPricing = pricingLabel.getText().replace("Price Range: ", "");
         String oldPath = (String) imageLabel.getClientProperty("imagePath");
 
+        //depending on which field the user wants to change, sets the corresponding label to the new value, and edits the database to reflect that
         if (type.equals("name") || type.equals("Name")) {
             nameLabel.setText(newField);
             backend.editData(oldName, false, newField, oldAddress, oldPricing, oldPath);
@@ -359,6 +371,7 @@ public class HomePage extends JFrame {
             pricingLabel.setText(newField);
             backend.editData(oldName, false, oldName, oldAddress, newField, oldPath);
         } else if (type.equals("image") || type.equals("Image")) {
+            //if user wants to change image, will ask for a new image file and assign it to the JLabel
             String[] imagePath = {""};
             JFileChooser fileChooser = new JFileChooser();
             FileFilter filter = new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes());
@@ -368,12 +381,14 @@ public class HomePage extends JFrame {
 
             int returnValue = fileChooser.showOpenDialog(null);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
+                //assigns image file and path
                 imageFile = fileChooser.getSelectedFile();
                 imagePath[0] = imageFile.getAbsolutePath();
             }
 
             if (imageFile != null) {
                 try {
+                    //converts file to an icon and attaches it to the JLabel. Also saves the new file path and edits database
                     BufferedImage img = ImageIO.read(imageFile);
                     ImageIcon icon = new ImageIcon(img.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
                     imageLabel.setIcon(icon);
@@ -387,15 +402,20 @@ public class HomePage extends JFrame {
                 imageLabel = new JLabel("No Image");
             }
         }
+        //recalculates and repaints screen
         panel.revalidate();
         panel.repaint();
     }
 
+    //function to refresh the page so cards are positioned accordingly
     public void refreshPage() {
+        //removes all panels, resets contraints, and resets total restaurant count
         panel.removeAll();
         constraints = new GridBagConstraints();
         constraints.insets = new Insets(10, 10, 10, 10);
         totalRestaurants = 0;
+
+        //reloads all cards and displays them again
         if(!(backend.getAltData().isEmpty())&&(backend.getSearch().equals(currentSearch))) {
             backend.getAltData().forEach(item -> {
                 createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
