@@ -8,3 +8,6 @@ META-INF/
 
 # ignore MacOS meta file
 .DS_Store
+
+# ignore data.csv
+data.csv
