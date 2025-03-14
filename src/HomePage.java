@@ -46,15 +46,19 @@ public class HomePage extends JFrame {
         this.add(scrollPane);
 
         menu = new JMenuBar();
-        JMenu options = new JMenu("Options");
+        menu.setLayout(new BoxLayout(menu, BoxLayout.X_AXIS));
         JMenuItem addButton = new JMenuItem("Add Restaurant");
-        options.add(addButton);
+        addButton.setMaximumSize(new Dimension(125, 30));
+        menu.add(addButton);
+        menu.add(Box.createHorizontalGlue());
 
         JTextField searchBar = new JTextField("Search");
-        searchBar.setPreferredSize(new Dimension(200, 20));
-        searchBar.setMinimumSize(new Dimension(200, 20));
-        searchBar.setMaximumSize(new Dimension(200, 20));
-        searchBar.setBorder(BorderFactory.createLineBorder(Color.white));
+        searchBar.setPreferredSize(new Dimension(200, 30));
+        searchBar.setMinimumSize(new Dimension(200, 30));
+        searchBar.setMaximumSize(new Dimension(200, 30));
+        searchBar.setBorder(BorderFactory.createLineBorder(Color.black));
+        menu.add(searchBar);
+        menu.add(Box.createHorizontalGlue());
 
         searchBar.addMouseListener(new MouseAdapter() {
             @Override
@@ -112,10 +116,6 @@ public class HomePage extends JFrame {
             }
         });
 
-        menu.add(options);
-        menu.add(Box.createHorizontalGlue());
-        menu.add(searchBar);
-        menu.add(Box.createHorizontalGlue());
         this.setJMenuBar(menu);
 
         addButton.addActionListener(e -> {
