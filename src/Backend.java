@@ -13,6 +13,7 @@ import java.util.ArrayList;
 public class Backend {
 
     static ArrayList<Data> data = new ArrayList<>();
+    static ArrayList<Data> altData = new ArrayList<>();
     static boolean loaded = false;
     String path = "";
 
@@ -106,6 +107,17 @@ public class Backend {
                 }
             }
         }
+        for (Data item : altData) {
+            if (item.getName().equals(name)) {
+                item.setName(newName);
+                item.setAddress(newAddress);
+                item.setPricing(newPricing);
+                item.setImagePath(newImagePath);
+                if (!editAll) {
+                    break;
+                }
+            }
+        }
 
         try {
             FileWriter fw = new FileWriter(this.path, false);
@@ -174,6 +186,7 @@ public class Backend {
         for (Data item : data) {
             if (item.getName().equals(name)) {
                 data.remove(item);
+                altData.remove(item);
                 if (!removeAll) {
                     break;
                 }
@@ -198,18 +211,21 @@ public class Backend {
 
     }
     //Returns a list of resturants (data) containing the filter
-    public ArrayList<Data> searchdata(String filter) {
-        ArrayList<Data> list = new ArrayList<Data>();
-        if(filter.equals(" ")) {
-            return list;
-
-        }else{
+    public void searchdata(String filter) {
+        if(!filter.isEmpty()) {
             for (Data item : data) {
-                if (item.getName().contains(filter)) {
-                    list.add(item);
+                if (item.getName().contains(filter)&&!altData.contains(item)) {
+                    altData.add(item);
                 }
             }
-            return list;
         }
+    }
+
+    public void setData(ArrayList<Data> data) {
+        Backend.data = data;
+    }
+
+    public static ArrayList<Data> getAltData() {
+        return altData;
     }
 }

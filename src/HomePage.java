@@ -8,6 +8,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class HomePage extends JFrame {
     private JMenuBar menu;
@@ -50,7 +52,21 @@ public class HomePage extends JFrame {
         searchBar.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                searchBar.setText("");
+                String search = searchBar.getText();
+                if((searchBar.getText().equals("Search"))) {
+                    searchBar.setText("");
+                }else {
+                    if (!search.isEmpty()) {
+                        backend.searchdata(search);
+                        refreshPage();
+                    }else{
+                        backend.searchdata(search);
+                        refreshPage();
+                    }
+
+                    panel.revalidate();
+                    panel.repaint();
+                }
             }
         });
 
@@ -280,7 +296,7 @@ public class HomePage extends JFrame {
             int returnValue = fileChooser.showOpenDialog(null);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 imageFile = fileChooser.getSelectedFile();
-                imagePath[0] = imageFile.getAbsolutePath();
+                imagePath[0] = imageFile.getPath();
             }
 
             if (imageFile != null) {
@@ -306,9 +322,17 @@ public class HomePage extends JFrame {
         constraints = new GridBagConstraints();
         constraints.insets = new Insets(10, 10, 10, 10);
         totalRestaurants = 0;
-        backend.getData().forEach(item -> {
-            createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
-        });
+        System.out.println(backend.getAltData().size());
+        if(!(backend.getAltData().isEmpty())) {
+            backend.getAltData().forEach(item -> {
+                createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
+            });
+        }
+        else{
+            backend.getData().forEach(item -> {
+                createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
+            });
+        }
     }
 
     public static void main(String[] args) {
