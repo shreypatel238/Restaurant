@@ -7,8 +7,11 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -154,10 +157,9 @@ public class HomePage extends JFrame {
         if (image != null) {
             try {
                 BufferedImage img = ImageIO.read(image);
-                ImageIcon icon = new ImageIcon(img.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+                ImageIcon icon = new ImageIcon(img.getScaledInstance(300, 200, Image.SCALE_SMOOTH));
                 restImage = new JLabel(icon);
-//                System.out.println(image.getAbsolutePath());
-                restImage.putClientProperty("imagePath", image.getAbsolutePath());
+                restImage.putClientProperty("imagePath", image.getPath());
             } catch (IOException e) {
                 restImage = new JLabel("Image load failed");
             }
@@ -219,31 +221,6 @@ public class HomePage extends JFrame {
         panel.repaint();
     }
 
-    /*
-    //Old version of addRestaurant function, kept as reference
-    public void addRestaurant() {
-        String name = JOptionPane.showInputDialog(this, "Enter the restaurant name");
-        if (name.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "You must enter a name!");
-            return;
-        }
-        String address = JOptionPane.showInputDialog(this, "Enter the restaurant address");
-        if (address.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "You must enter an address!");
-            return;
-        }
-        String pricing = JOptionPane.showInputDialog(this, "Enter the restaurant price range (Ex. $10-$100)");
-        if (pricing.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "You must enter a price range!");
-            return;
-        }
-
-        backend.addData(name, address, pricing); //Add to CSV
-
-        createCard(name, address, pricing);
-    }
-    */
-
     //Gathers restaurant details for card creation
     public void addRestaurant() throws IOException {
         //Creates fields for the details
@@ -275,8 +252,20 @@ public class HomePage extends JFrame {
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 //Gets file and file path of the image the user selected
                 File imageFile = fileChooser.getSelectedFile();
-                imagePath[0] =imageFile.getAbsolutePath();
+
+                File folder = new File("res");
+                File file = new File(folder, imageFile.getName());
+                if (!file.exists()) {
+                    try {
+                        //Copies the file to the folder so it can be displayed on any machine
+                        Files.copy(imageFile.toPath(), file.toPath());
+                        imagePath[0] = file.getPath();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
             }
+
         });
         enterPanel.add(selectButton);
 
@@ -314,8 +303,14 @@ public class HomePage extends JFrame {
         //gets the JPanel and JLabels of the card
         JPanel component = (JPanel) restaurantPanel.getComponent(1);
         JLabel nameLabel = (JLabel) component.getComponent(1);
+        JLabel imageLabel = (JLabel) component.getComponent(0);
 
-        //removes the card and substracts 1 restaurant. Also removes the data from the database
+        //Deletes file when card is removed
+        String path = (String) imageLabel.getClientProperty("imagePath");
+        File filePath = new File(path);
+        filePath.delete();
+
+        //removes the card and subtracts 1 restaurant. Also removes the data from the database
         panel.remove(restaurantPanel);
         totalRestaurants -= 1;
         backend.removeData(nameLabel.getText().replace("Name: ", ""), false);
@@ -383,14 +378,28 @@ public class HomePage extends JFrame {
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 //assigns image file and path
                 imageFile = fileChooser.getSelectedFile();
-                imagePath[0] = imageFile.getAbsolutePath();
+
+                File folder = new File("res");
+                File file = new File(folder, imageFile.getName());
+                if (!file.exists()) {
+                    try {
+                        //Copies the file to the folder so it can be displayed on any machine
+                        Files.copy(imageFile.toPath(), file.toPath());
+                        imagePath[0] = file.getPath();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+                //Deletes old image file
+                File path = new File(oldPath);
+                path.delete();
             }
 
             if (imageFile != null) {
                 try {
                     //converts file to an icon and attaches it to the JLabel. Also saves the new file path and edits database
                     BufferedImage img = ImageIO.read(imageFile);
-                    ImageIcon icon = new ImageIcon(img.getScaledInstance(150, 150, Image.SCALE_SMOOTH));
+                    ImageIcon icon = new ImageIcon(img.getScaledInstance(300, 200, Image.SCALE_SMOOTH));
                     imageLabel.setIcon(icon);
                     imageLabel.setText(null);
                     imageLabel.putClientProperty("imagePath", imagePath[0]);
