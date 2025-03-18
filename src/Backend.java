@@ -12,8 +12,8 @@ import java.util.ArrayList;
 
 public class Backend {
 
-    static ArrayList<Data> data = new ArrayList<>();
-    static ArrayList<Data> altData = new ArrayList<>();
+    static ArrayList<Restaurant> data = new ArrayList<>();
+    static ArrayList<Restaurant> altData = new ArrayList<>();
     static ArrayList<User> users = new ArrayList<>();
     static boolean loaded = false;
     String search = "";
@@ -40,7 +40,7 @@ public class Backend {
             }
     
             // name, address, pricing
-            Data resturant = new Data(name, address, pricing, imagePath);
+            Restaurant resturant = new Restaurant(name, address, pricing, imagePath);
             data.add(resturant);
         }
         
@@ -63,7 +63,7 @@ public class Backend {
         }
     }
 
-    public ArrayList<Data> getData() {
+    public ArrayList<Restaurant> getData() {
         // Ensures the file isn't read twice
         if (!loaded) {
             read(this.path);
@@ -73,7 +73,7 @@ public class Backend {
         return data;
     }
 
-    private void writeData(Data resturant) {
+    private void writeData(Restaurant resturant) {
         // File writing
         try {
             FileWriter fw = new FileWriter(this.path, true);
@@ -87,19 +87,19 @@ public class Backend {
     }
 
     public void addData(String name, String address, String pricing, String imagePath) {
-        Data resturant = new Data(name, address, pricing, imagePath);
+        Restaurant resturant = new Restaurant(name, address, pricing, imagePath);
         data.add(resturant);
         writeData(resturant);
     }
 
-    public void addData(Data resturant) {
+    public void addData(Restaurant resturant) {
         data.add(resturant);
         writeData(resturant);
     }
 
     public void editData(String name, boolean editAll, String newName, String newAddress, String newPricing, String newImagePath) {
 
-        for (Data item : data) {
+        for (Restaurant item : data) {
             if (item.getName().equals(name)) {
                 item.setName(newName);
                 item.setAddress(newAddress);
@@ -110,7 +110,7 @@ public class Backend {
                 }
             }
         }
-        for (Data item : altData) {
+        for (Restaurant item : altData) {
             if (item.getName().equals(name)) {
                 item.setName(newName);
                 item.setAddress(newAddress);
@@ -231,7 +231,7 @@ public class Backend {
     // removes an item of String "name" from a file
     public void removeData(String name, boolean removeAll) {
 
-        for (Data item : data) {
+        for (Restaurant item : data) {
             if (item.getName().equals(name)) {
                 data.remove(item);
                 altData.remove(item);
@@ -261,7 +261,7 @@ public class Backend {
     //Returns a list of resturants (data) containing the filter
     public void searchdata(String filter) {
         if(!filter.isEmpty()) {
-            for (Data item : data) {
+            for (Restaurant item : data) {
                 if (item.getName().contains(filter)&&!altData.contains(item)) {
                     altData.add(item);
 
@@ -275,11 +275,11 @@ public class Backend {
         }
     }
 
-    public void setData(ArrayList<Data> data) {
+    public void setData(ArrayList<Restaurant> data) {
         Backend.data = data;
     }
 
-    public static ArrayList<Data> getAltData() {
+    public static ArrayList<Restaurant> getAltData() {
         return altData;
     }
 

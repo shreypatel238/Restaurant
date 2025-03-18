@@ -2,13 +2,13 @@
 
 import java.util.Objects;
 
-public class Data {
+public class Restaurant {
     private String name;
     private String address;
     private String pricing;
     private String imagePath;
 
-    public Data(String name, String address, String pricing, String imagePath) {
+    public Restaurant(String name, String address, String pricing, String imagePath) {
         this.name = name;
         this.address = address;
         this.pricing = pricing;
@@ -20,9 +20,9 @@ public class Data {
     public boolean equals(Object o) {
         if (o == this)
             return true;
-        if(!(o instanceof Data))
+        if(!(o instanceof Restaurant))
             return false;
-        Data other = (Data) o;
+        Restaurant other = (Restaurant) o;
         boolean nameEquals = (this.name == null && other.name == null)
           || (this.name != null && this.name.equals(other.name));
         boolean addressEquals = (this.address == null && other.address == null)

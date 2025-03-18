@@ -8,8 +8,8 @@ import org.junit.*;
 public class TestBackend {
     
     String testPath = "./Restaurant/mirror/testBackend.csv";
-    Data testData1 = new Data("McDonalds","100 Mc Way","$10-$20","image.png");
-    Data testData2 = new Data("Subway", "100 Sub Way","$10", "image.jpg");
+    Restaurant testData1 = new Restaurant("McDonalds","100 Mc Way","$10-$20","image.png");
+    Restaurant testData2 = new Restaurant("Subway", "100 Sub Way","$10", "image.jpg");
     String testName = "McDonalds";
     String testAddress = "123 Sesame Street"; 
     String testPricing = "$10-$20";
@@ -24,14 +24,14 @@ public class TestBackend {
     // Tests that adding a restaurant to the backend fits the expected format
     @Test
     public void testBackendAddData() {
-        ArrayList<Data> testData = new ArrayList<>();
+        ArrayList<Restaurant> testData = new ArrayList<>();
         testData.add(testData1);
         testData.add(testData2);
 
         Backend backend = new Backend(testPath);
         backend.addData(testData1);
         backend.addData(testData2);
-        ArrayList<Data> obtainedData = Backend.data;
+        ArrayList<Restaurant> obtainedData = Backend.data;
 
         assertEquals(testData, obtainedData);
 
@@ -42,12 +42,12 @@ public class TestBackend {
     // Tests that when the "editData()" function is called, the changed values match what is expected
     @Test
     public void testBackendEditData() {
-        Data expected = new Data(testName, testAddress, testPricing, testImagePath);
+        Restaurant expected = new Restaurant(testName, testAddress, testPricing, testImagePath);
 
         Backend backend = new Backend(testPath);
         backend.addData(testData1);
         backend.editData(testData1.getName(), false, testName, testAddress, testPricing, testImagePath);
-        Data actual = Backend.data.get(0);
+        Restaurant actual = Backend.data.get(0);
 
         assertTrue(expected.getName().equals(actual.getName()));
         assertTrue(expected.getAddress().equals(actual.getAddress()));
@@ -61,7 +61,7 @@ public class TestBackend {
     @Test
     public void testBackendRemoveData() {
         Backend backend = new Backend(testPath);
-        ArrayList<Data> expected = new ArrayList<>();
+        ArrayList<Restaurant> expected = new ArrayList<>();
         backend.addData(testData1);
         backend.removeData(testData1.getName(), false);
 

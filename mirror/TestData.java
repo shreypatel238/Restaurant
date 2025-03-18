@@ -11,13 +11,13 @@ public class TestData {
     //Tests that a "Data" Object can be created using its paramaterized constructor
     @Test
     public void testCreateData() {
-        Data data = new Data("name", "address", "pricing", "path");
+        Restaurant data = new Restaurant("name", "address", "pricing", "path");
     }
 
     // Tests the getters and setters for the "Data" class
     @Test
     public void testDataInformation() {
-        Data data = new Data("name", "address", "pricing", "path");
+        Restaurant data = new Restaurant("name", "address", "pricing", "path");
         data.setName(testName);
         data.setAddress(testAddress);
         data.setPricing(testPricing);
