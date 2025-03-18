@@ -325,10 +325,13 @@ public class HomePage extends JFrame {
 
     //edits restaurant data
     public void editRestaurant(JPanel restaurantPanel) {
-        //asks what field the user wants to change and checks if its empty or not
+        //asks what field the user wants to change and checks if it's empty or not
         String type = JOptionPane.showInputDialog(this, "Which field would you like to edit? Name, Address, Pricing, or Image");
         if (type == null || type.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Enter a field to change!");
+            return;
+        } else if (!type.equals("name") && !type.equals("Name") && !type.equals("Address") && !type.equals("address") && !type.equals("pricing") && !type.equals("Pricing") && !type.equals("Image") && !type.equals("image")) {
+            JOptionPane.showMessageDialog(this, "Enter a field from the choices above", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
