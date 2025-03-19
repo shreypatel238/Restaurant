@@ -41,6 +41,8 @@ public class HomePage extends JFrame {
         constraints = new GridBagConstraints();
         constraints.insets = new Insets(10, 10, 10, 10);
 
+        panel.setBackground(new Color(210, 180, 140));
+
         //Creates a card for each restaurant in data
         backend.getData().forEach(item -> {
             createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
