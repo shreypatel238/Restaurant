@@ -222,12 +222,6 @@ public class Backend {
         return false;
     }
 
-    public void logout() {
-        // Depends on the front end implementation
-    }
-
-
-    
     // removes an item of String "name" from a file
     public void removeData(String name, boolean removeAll) {
 
@@ -273,6 +267,16 @@ public class Backend {
             altData.clear();
             search = null;
         }
+    }
+
+    //Gets user object based on username
+    public User getUser(String username) {
+        for (User u : users) {
+            if (u.getUsername().equals(username)) {
+                return u;
+            }
+        }
+        return null;
     }
 
     public void setData(ArrayList<Restaurant> data) {

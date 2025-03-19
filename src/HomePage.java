@@ -7,25 +7,20 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Objects;
-
-
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 public class HomePage extends JFrame {
     private JMenuBar menu;
     private JPanel panel;
     private GridBagConstraints constraints;
     private int totalRestaurants = 0;
-    private Backend backend;
+    private Backend backend = new Backend("./data.csv");
     private String currentSearch;
+    private boolean loggedIn = false;
+    private User user = null;
 
     public HomePage() {
         this.setTitle("Restaurant Catalog");
@@ -33,13 +28,20 @@ public class HomePage extends JFrame {
         this.setSize(1500, 800);
         this.setLocationRelativeTo(null);
 
+        if (!loggedIn) {
+            createLoginPage();
+        }
+    }
+
+    //Creates the home page
+    public void createHomePage() {
         this.panel = new JPanel();
         this.panel.setLayout(new GridBagLayout());
 
         constraints = new GridBagConstraints();
         constraints.insets = new Insets(10, 10, 10, 10);
 
-        this.backend = new Backend("./data.csv");
+        //Creates a card for each restaurant in data
         backend.getData().forEach(item -> {
             createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
         });
@@ -48,12 +50,37 @@ public class HomePage extends JFrame {
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         this.add(scrollPane);
 
-        //Creates JMenuBar and sets lauout. Adds a button to add restaurants and creates a margin using horizontal glue and adds it to menu
+        //Creates JMenuBar and sets layout. Adds a button to add restaurants and creates a margin using horizontal glue and adds it to menu
         menu = new JMenuBar();
         menu.setLayout(new BoxLayout(menu, BoxLayout.X_AXIS));
-        JMenuItem addButton = new JMenuItem("Add Restaurant");
-        addButton.setMaximumSize(new Dimension(125, 30));
-        menu.add(addButton);
+
+        //If user is admin, adds add restaurant button
+        if (user.getLevel() == 0) {
+            JMenuItem addButton = new JMenuItem("Add Restaurant");
+            addButton.setMaximumSize(new Dimension(125, 30));
+            menu.add(addButton);
+
+            //Adds functionality to the add restaurants button. Calls addRestaurant when pressed
+            addButton.addActionListener(e -> {
+                try {
+                    addRestaurant();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+        }
+
+        JMenuItem logOutButton = new JMenuItem("Log Out");
+        logOutButton.setMaximumSize(new Dimension(75, 30));
+
+        //Logs user out
+        logOutButton.addActionListener(e -> {
+            loggedIn = false;
+            user = null;
+            this.dispose();
+        });
+
+        menu.add(logOutButton);
         menu.add(Box.createHorizontalGlue());
 
         //Creates a search bar, sets size, and adds to menu
@@ -123,17 +150,94 @@ public class HomePage extends JFrame {
         });
 
         this.setJMenuBar(menu);
+        this.setVisible(true);
+    }
 
-        //Adds functionality to the add restaurants button. Calls addRestaurant when pressed
-        addButton.addActionListener(e -> {
-            try {
-                addRestaurant();
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
+    //Function to display login page
+    public void createLoginPage() {
+        //Creates JFrame
+        JFrame frame = new JFrame();
+        frame.setTitle("Register or Log In");
+        frame.setSize(400, 300);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLocationRelativeTo(this);
+
+        //Creates main JPanel
+        JPanel page = new JPanel();
+
+        //Creates JPanel for registering and sets gridlayout
+        JPanel registerPanel = new JPanel();
+        registerPanel.setLayout(new GridLayout(3, 2));
+
+        //Creates JLabels and JTextFields
+        JLabel regName = new JLabel("Create a username: ");
+        JTextField regNameField = new JTextField();
+        JLabel regPass = new JLabel("Create a password: ");
+        JTextField regPassField = new JTextField();
+        JButton registerButton = new JButton("Register");
+
+        registerButton.addActionListener(e -> {
+            //Checks if all fields are filled
+            if (regNameField.getText().trim().isEmpty() || regPassField.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "You must enter a username and password!", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } else if (backend.register(regNameField.getText().trim(), regPassField.getText().trim())) {
+                //Registers and displays home page if username is valid
+                User userTemp = backend.getUser(regNameField.getText().trim());
+                user = userTemp;
+                loggedIn = true;
+                createHomePage();
+                frame.dispose();
+            } else if (!backend.register(regNameField.getText().trim(), regPassField.getText().trim())) {
+                //If username is taken, displays error message
+                JOptionPane.showMessageDialog(this, "Username is already taken", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        this.setVisible(true);
+        registerPanel.add(regName);
+        registerPanel.add(regNameField);
+        registerPanel.add(regPass);
+        registerPanel.add(regPassField);
+        registerPanel.add(registerButton);
+
+        //Creates loginPanel and sets GridLayout
+        JPanel loginPanel = new JPanel();
+        loginPanel.setLayout(new GridLayout(3, 2));
+
+        //Creates JLabels and JTextFields
+        JLabel loginName = new JLabel("Enter username: ");
+        JTextField loginNameField = new JTextField();
+        JLabel loginPass = new JLabel("Enter password: ");
+        JTextField loginPassField = new JTextField();
+        JButton loginButton = new JButton("Login");
+
+        loginButton.addActionListener(e -> {
+            //Checks if all fields are valid
+            if (loginNameField.getText().trim().isEmpty() || loginPassField.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "You must enter a username and password!", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } else if (backend.login(loginNameField.getText().trim(), loginPassField.getText().trim())) {
+                //If login is valid, logs in and displays home page
+                User userTemp = backend.getUser(loginNameField.getText().trim());
+                user = userTemp;
+                loggedIn = true;
+                createHomePage();
+                frame.dispose();
+            } else if (!backend.login(loginNameField.getText().trim(), loginPassField.getText().trim())) {
+                //If login is not valid, displays error message
+                JOptionPane.showMessageDialog(this, "Incorrect username or password", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        loginPanel.add(loginName);
+        loginPanel.add(loginNameField);
+        loginPanel.add(loginPass);
+        loginPanel.add(loginPassField);
+        loginPanel.add(loginButton);
+
+        //Adds to main JPanel and main JFrame
+        page.add(registerPanel);
+        page.add(loginPanel);
+        frame.add(page);
+        frame.setVisible(true);
     }
 
     //Creates a card where the restaurant information will be displayed. Takes in a name, address, pricing, and image file
@@ -172,24 +276,28 @@ public class HomePage extends JFrame {
         restAddress.setFont(new Font("", Font.BOLD, 15));
         restPricing.setFont(new Font("", Font.BOLD, 20));
 
-        //Creates a panel dedicated to the edit button
-        JPanel editPanel = new JPanel(new BorderLayout());
-        editPanel.setBackground(new Color(245, 224, 130));
-        JMenuBar menuBar = new JMenuBar();
-        //Creates a JMenu item and assigns to JMenuItem's to it: update and remove
-        JMenu dots = new JMenu("...");
-        JMenuItem updateButton = new JMenuItem("Update");
-        JMenuItem removeButton = new JMenuItem("Remove");
-        dots.add(updateButton);
-        dots.add(removeButton);
-        menuBar.add(dots);
+        //If user is admin, adds edit and remove buttons
+        if (user.getLevel() == 0) {
+            //Creates a panel dedicated to the edit button
+            JPanel editPanel = new JPanel(new BorderLayout());
+            editPanel.setBackground(new Color(245, 224, 130));
+            JMenuBar menuBar = new JMenuBar();
+            //Creates a JMenu item and assigns to JMenuItem's to it: update and remove
+            JMenu dots = new JMenu("...");
+            JMenuItem updateButton = new JMenuItem("Update");
+            JMenuItem removeButton = new JMenuItem("Remove");
+            dots.add(updateButton);
+            dots.add(removeButton);
+            menuBar.add(dots);
 
-        //When clicked, the remove and update buttons will run their respective functions
-        removeButton.addActionListener(e -> removeRestaurant(restaurantPanel));
-        updateButton.addActionListener(e -> editRestaurant(restaurantPanel));
+            //When clicked, the remove and update buttons will run their respective functions
+            removeButton.addActionListener(e -> removeRestaurant(restaurantPanel));
+            updateButton.addActionListener(e -> editRestaurant(restaurantPanel));
 
-        //adds it to the right side of the panel
-        editPanel.add(menuBar, BorderLayout.LINE_END);
+            //adds it to the right side of the panel
+            editPanel.add(menuBar, BorderLayout.LINE_END);
+            restaurantPanel.add(editPanel, BorderLayout.PAGE_START);
+        }
 
         //Creates panel for the details of the restaurant and adds the JLabels
         JPanel detailPanel = new JPanel(new GridLayout(4, 1));
@@ -203,7 +311,6 @@ public class HomePage extends JFrame {
         JButton viewDetails = new JButton("View Details");
 
         //adds all panels to main panel
-        restaurantPanel.add(editPanel, BorderLayout.PAGE_START);
         restaurantPanel.add(detailPanel, BorderLayout.CENTER);
         restaurantPanel.add(viewDetails, BorderLayout.PAGE_END);
 
@@ -438,56 +545,6 @@ public class HomePage extends JFrame {
                 createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
             });
         }
-    }
-
-    //Function to display login page
-    public void showLoginPage() {
-        //Creates JFrame
-        JFrame frame = new JFrame();
-        frame.setSize(400, 400);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setLocationRelativeTo(this);
-
-        //Creates main JPanel
-        JPanel page = new JPanel();
-
-        //Creates JPanel for registering and sets gridlayout
-        JPanel registerPanel = new JPanel();
-        registerPanel.setLayout(new GridLayout(3, 2));
-
-        //Creates JLabels and JTextFields
-        JLabel createName = new JLabel("Create a username: ");
-        JTextField createNameField = new JTextField();
-        JLabel createPass = new JLabel("Create a password: ");
-        JTextField createPassField = new JTextField();
-        JButton registerButton = new JButton("Register");
-        registerPanel.add(createName);
-        registerPanel.add(createNameField);
-        registerPanel.add(createPass);
-        registerPanel.add(createPassField);
-        registerPanel.add(registerButton);
-
-        //Creates loginPanel and sets GridLayout
-        JPanel loginPanel = new JPanel();
-        loginPanel.setLayout(new GridLayout(3, 2));
-
-        //Creates JLabels and JTextFields
-        JLabel enterName = new JLabel("Enter username: ");
-        JTextField enterNameField = new JTextField();
-        JLabel enterPass = new JLabel("Enter password: ");
-        JTextField enterPassField = new JTextField();
-        JButton loginButton = new JButton("Login");
-        loginPanel.add(enterName);
-        loginPanel.add(enterNameField);
-        loginPanel.add(enterPass);
-        loginPanel.add(enterPassField);
-        loginPanel.add(loginButton);
-
-        //Adds to main JPanel and main JFrame
-        page.add(registerPanel);
-        page.add(loginPanel);
-        frame.add(page);
-        frame.setVisible(true);
     }
 
     public static void main(String[] args) {
