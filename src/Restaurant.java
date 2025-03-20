@@ -38,5 +38,5 @@ public class Restaurant {
         this.pricing = pricing;
     }
 
-    public void setImagePath(String imagePath) {this.imagePath = imagePath;}
+    public void setImagePath(String imagePath) {this.imagePath = imagePath.replace("\\", "/");}
 }

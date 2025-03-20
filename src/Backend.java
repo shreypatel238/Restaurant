@@ -32,7 +32,7 @@ public class Backend {
             String name = args[0];
             String address = args[1];
             String pricing = args[2];
-            String imagePath = args[3];
+            String imagePath = args[3].replace("\\", "/");
     
             // Skipping invalid data entry
             if (name == null || address == null || pricing == null || imagePath == null) {
@@ -87,7 +87,7 @@ public class Backend {
     }
 
     public void addData(String name, String address, String pricing, String imagePath) {
-        Restaurant resturant = new Restaurant(name, address, pricing, imagePath);
+        Restaurant resturant = new Restaurant(name, address, pricing, imagePath.replace("\\", "/"));
         data.add(resturant);
         writeData(resturant);
     }

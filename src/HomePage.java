@@ -362,7 +362,7 @@ public class HomePage extends JFrame {
                 //Gets file and file path of the image the user selected
                 File imageFile = fileChooser.getSelectedFile();
 
-                File folder = new File("res");
+                File folder = new File("data");
                 File file = new File(folder, imageFile.getName());
                 if (!file.exists()) {
                     try {
@@ -491,7 +491,7 @@ public class HomePage extends JFrame {
                 //assigns image file and path
                 imageFile = fileChooser.getSelectedFile();
 
-                File folder = new File("res");
+                File folder = new File("data");
                 File file = new File(folder, imageFile.getName());
                 if (!file.exists()) {
                     try {
