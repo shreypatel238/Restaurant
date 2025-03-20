@@ -175,7 +175,7 @@ public class HomePage extends JFrame {
         JLabel regName = new JLabel("Create a username: ");
         JTextField regNameField = new JTextField();
         JLabel regPass = new JLabel("Create a password: ");
-        JTextField regPassField = new JTextField();
+        JPasswordField regPassField = new JPasswordField();
         JButton registerButton = new JButton("Register");
 
         registerButton.addActionListener(e -> {
@@ -209,7 +209,7 @@ public class HomePage extends JFrame {
         JLabel loginName = new JLabel("Enter username: ");
         JTextField loginNameField = new JTextField();
         JLabel loginPass = new JLabel("Enter password: ");
-        JTextField loginPassField = new JTextField();
+        JPasswordField loginPassField = new JPasswordField();
         JButton loginButton = new JButton("Login");
 
         loginButton.addActionListener(e -> {
