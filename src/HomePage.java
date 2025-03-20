@@ -35,6 +35,9 @@ public class HomePage extends JFrame {
 
     //Creates the home page
     public void createHomePage() {
+        this.getContentPane().removeAll();
+        this.repaint();
+
         this.panel = new JPanel();
         this.panel.setLayout(new GridBagLayout());
 
@@ -79,6 +82,7 @@ public class HomePage extends JFrame {
         logOutButton.addActionListener(e -> {
             loggedIn = false;
             user = null;
+            createLoginPage();
             this.dispose();
         });
 
