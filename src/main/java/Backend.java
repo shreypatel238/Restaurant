@@ -288,6 +288,10 @@ public class Backend {
         return null;
     }
 
+    public User getGuest() {
+        return new User("Guest", "", 2);
+    }
+
     public void setData(ArrayList<Restaurant> data) {
         Backend.data = data;
     }

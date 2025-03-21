@@ -19,7 +19,7 @@ public class LoginPage extends JFrame {
 
     private void createLoginPage() {
         //Creates main JPanel
-        JPanel loginWindow = new JPanel();
+        JPanel loginWindow = new JPanel(new GridLayout(2, 1));
 
         //Register Panel
         //Creates JPanel for registering and sets gridlayout
@@ -62,6 +62,8 @@ public class LoginPage extends JFrame {
         JLabel loginPass = new JLabel("Enter password: ");
         JPasswordField loginPassField = new JPasswordField();
         JButton loginButton = new JButton("Login");
+        JButton guestButton = new JButton("Continue as Guest");
+
 
         loginButton.addActionListener(e -> {
             //Checks if all fields are valid
@@ -77,12 +79,20 @@ public class LoginPage extends JFrame {
             }
         });
 
+        guestButton.addActionListener(e -> {
+            homePage.setUser(backend.getGuest());
+            dispose();
+        });
+
         loginPanel.add(loginName);
         loginPanel.add(loginNameField);
         loginPanel.add(loginPass);
         loginPanel.add(loginPassField);
         loginPanel.add(loginButton);
-
+        loginPanel.add(guestButton);
+        
+    
+        
         //Adds to main JPanel and main JFrame of Login Page
         loginWindow.add(registerPanel);
         loginWindow.add(loginPanel);

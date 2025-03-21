@@ -366,12 +366,15 @@ public class HomePage extends JFrame {
     //edits restaurant data
     public void editRestaurant(JPanel restaurantPanel) {
         //asks what field the user wants to change and checks if it's empty or not
-        String type = JOptionPane.showInputDialog(this, "Which field would you like to edit? Name, Address, Pricing, or Image");
-        if (type == null || type.trim().isEmpty()) {
+        String[] options = {"Name", "Address", "Pricing", "Image"};
+        JComboBox<String> comboBox = new JComboBox<>(options);
+        int result = JOptionPane.showConfirmDialog(this, comboBox, "Which field would you like to edit?", JOptionPane.OK_CANCEL_OPTION);
+        String type = (String) comboBox.getSelectedItem();
+        System.out.println(result);
+        if (result == JOptionPane.OK_OPTION && type == null || type.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Enter a field to change!");
             return;
-        } else if (!type.equals("name") && !type.equals("Name") && !type.equals("Address") && !type.equals("address") && !type.equals("pricing") && !type.equals("Pricing") && !type.equals("Image") && !type.equals("image")) {
-            JOptionPane.showMessageDialog(this, "Enter a field from the choices above", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if (result == JOptionPane.CANCEL_OPTION) {
             return;
         }
 
@@ -379,7 +382,7 @@ public class HomePage extends JFrame {
         String newField = "";
         if (!type.equals("image") && !type.equals("Image")) {
             newField = JOptionPane.showInputDialog(this, "Enter new " + type);
-            if (newField.trim().isEmpty()) {
+            if (newField.equals("") || newField.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "You must enter something!");
                 return;
             }
@@ -389,8 +392,8 @@ public class HomePage extends JFrame {
         JPanel component = (JPanel) restaurantPanel.getComponent(1);
         //gets all JLabel data so the text can be extracted
         JLabel nameLabel = (JLabel) component.getComponent(1);
-        JLabel addressLabel = (JLabel) component.getComponent(2);
-        JLabel pricingLabel = (JLabel) component.getComponent(3);
+        JLabel addressLabel = (JLabel) component.getComponent(3);
+        JLabel pricingLabel = (JLabel) component.getComponent(2);
         JLabel imageLabel = (JLabel) component.getComponent(0);
         //Stores JLabel values into variables
         String oldName = nameLabel.getText().replace("Name: ", "");
@@ -398,11 +401,13 @@ public class HomePage extends JFrame {
         String oldPricing = pricingLabel.getText().replace("Price Range: ", "");
         String oldPath = (String) imageLabel.getClientProperty("imagePath");
 
+        System.out.println(type);
+
         //depending on which field the user wants to change, sets the corresponding label to the new value, and edits the database to reflect that
         if (type.equals("name") || type.equals("Name")) {
             nameLabel.setText(newField);
             backend.editData(oldName, false, newField, oldAddress, oldPricing, oldPath);
-        } else if (type.equals("address") || type.equals("Address")) {
+        } else if (type.equals("Address")) {
             addressLabel.setText(newField);
             backend.editData(oldName, false, oldName, newField, oldPricing, oldPath);
         } else if (type.equals("pricing") || type.equals("Pricing")) {
