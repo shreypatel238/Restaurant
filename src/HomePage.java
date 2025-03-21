@@ -29,7 +29,8 @@ public class HomePage extends JFrame {
         this.setLocationRelativeTo(null);
 
         if (!loggedIn) {
-            createLoginPage();
+            LoginPage loginPage = new LoginPage(backend, this);
+            loginPage.setVisible(true);
         }
     }
 
@@ -82,7 +83,8 @@ public class HomePage extends JFrame {
         logOutButton.addActionListener(e -> {
             loggedIn = false;
             user = null;
-            createLoginPage();
+            LoginPage loginPage = new LoginPage(backend, this);
+            loginPage.setVisible(true);
             this.dispose();
         });
 
@@ -159,91 +161,11 @@ public class HomePage extends JFrame {
         this.setVisible(true);
     }
 
-    //Function to display login page
-    public void createLoginPage() {
-        //Creates JFrame
-        JFrame frame = new JFrame();
-        frame.setTitle("Register or Log In");
-        frame.setSize(400, 300);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLocationRelativeTo(this);
-
-        //Creates main JPanel
-        JPanel page = new JPanel();
-
-        //Creates JPanel for registering and sets gridlayout
-        JPanel registerPanel = new JPanel();
-        registerPanel.setLayout(new GridLayout(3, 2));
-
-        //Creates JLabels and JTextFields
-        JLabel regName = new JLabel("Create a username: ");
-        JTextField regNameField = new JTextField();
-        JLabel regPass = new JLabel("Create a password: ");
-        JPasswordField regPassField = new JPasswordField();
-        JButton registerButton = new JButton("Register");
-
-        registerButton.addActionListener(e -> {
-            //Checks if all fields are filled
-            if (regNameField.getText().trim().isEmpty() || regPassField.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "You must enter a username and password!", "ERROR", JOptionPane.ERROR_MESSAGE);
-            } else if (backend.register(regNameField.getText().trim(), regPassField.getText().trim())) {
-                //Registers and displays home page if username is valid
-                User userTemp = backend.getUser(regNameField.getText().trim());
-                user = userTemp;
-                loggedIn = true;
-                createHomePage();
-                frame.dispose();
-            } else if (!backend.register(regNameField.getText().trim(), regPassField.getText().trim())) {
-                //If username is taken, displays error message
-                JOptionPane.showMessageDialog(this, "Username is already taken", "ERROR", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        registerPanel.add(regName);
-        registerPanel.add(regNameField);
-        registerPanel.add(regPass);
-        registerPanel.add(regPassField);
-        registerPanel.add(registerButton);
-
-        //Creates loginPanel and sets GridLayout
-        JPanel loginPanel = new JPanel();
-        loginPanel.setLayout(new GridLayout(3, 2));
-
-        //Creates JLabels and JTextFields
-        JLabel loginName = new JLabel("Enter username: ");
-        JTextField loginNameField = new JTextField();
-        JLabel loginPass = new JLabel("Enter password: ");
-        JPasswordField loginPassField = new JPasswordField();
-        JButton loginButton = new JButton("Login");
-
-        loginButton.addActionListener(e -> {
-            //Checks if all fields are valid
-            if (loginNameField.getText().trim().isEmpty() || loginPassField.getText().trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "You must enter a username and password!", "ERROR", JOptionPane.ERROR_MESSAGE);
-            } else if (backend.login(loginNameField.getText().trim(), loginPassField.getText().trim())) {
-                //If login is valid, logs in and displays home page
-                User userTemp = backend.getUser(loginNameField.getText().trim());
-                user = userTemp;
-                loggedIn = true;
-                createHomePage();
-                frame.dispose();
-            } else if (!backend.login(loginNameField.getText().trim(), loginPassField.getText().trim())) {
-                //If login is not valid, displays error message
-                JOptionPane.showMessageDialog(this, "Incorrect username or password", "ERROR", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        loginPanel.add(loginName);
-        loginPanel.add(loginNameField);
-        loginPanel.add(loginPass);
-        loginPanel.add(loginPassField);
-        loginPanel.add(loginButton);
-
-        //Adds to main JPanel and main JFrame
-        page.add(registerPanel);
-        page.add(loginPanel);
-        frame.add(page);
-        frame.setVisible(true);
+    public void setUser(User user) {
+        this.user = user;
+        this.loggedIn = true;
+        createHomePage();
+        setVisible(true);
     }
 
     //Creates a card where the restaurant information will be displayed. Takes in a name, address, pricing, and image file
