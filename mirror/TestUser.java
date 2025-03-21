@@ -44,6 +44,12 @@ public class TestUser {
 
     }
 
+    // Tests that a User can delete their account from file
+    @Test
+    public void testUserAccountDeletion() {
+
+    }
+
     // Test that a User's access level to see if they can use admin level functions
     @Test
     public void testUserAccessLevel() {
