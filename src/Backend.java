@@ -255,10 +255,19 @@ public class Backend {
     //Returns a list of resturants (data) containing the filter
     public void searchdata(String filter) {
         if(!filter.isEmpty()) {
+
+            boolean pricingcheck = filter.matches("[$][0-9]+ - [$][0-9]+");
+            if(pricingcheck) {
+                altData.clear();
+            }
             for (Restaurant item : data) {
-                if (item.getName().contains(filter)&&!altData.contains(item)) {
+                if (!pricingcheck&&item.getName().contains(filter)&&!altData.contains(item)) {
                     altData.add(item);
 
+                }
+
+                else if(pricingcheck&&item.getPricing().contains(filter) && !altData.contains(item)) {
+                    altData.add(item);
                 }
             }
             search = filter;
