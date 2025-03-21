@@ -25,21 +25,39 @@ public class Backend {
         this.readUsers("./users.csv");
     }
 
-    private static void parse(String line) {
+
+    // Parses the resturant data from the file
+    private static void parseRestaurant(String line) {
         String[] args = line.split(",");
 
-        if (args.length == 4) {
+        if (args.length >= 4) {
             String name = args[0];
             String address = args[1];
             String pricing = args[2];
             String imagePath = args[3].replace("\\", "/");
+            String tagData = "";
+            String description = "";
+            if (args.length == 5) {
+                description = args[4];
+            }
+            if (args.length == 6) {
+                description = args[4];
+                tagData = args[5];
+            }
+
     
             // Skipping invalid data entry
             if (name == null || address == null || pricing == null || imagePath == null) {
                 return;
             }
     
-            // name, address, pricing
+            // name, address, pricing, imagePath, tags
+            if (tagData != null) {
+                ArrayList<String> tagsArray = parseTags(tagData);
+                Restaurant resturant = new Restaurant(name, address, pricing, imagePath, description, tagsArray);
+                data.add(resturant);
+                return;
+            }
             Restaurant resturant = new Restaurant(name, address, pricing, imagePath);
             data.add(resturant);
         }
@@ -55,7 +73,7 @@ public class Backend {
             String line;
             while ((line = br.readLine()) != null) {
                 // File parsing
-                parse(line);
+                parseRestaurant(line);
             }
             br.close();
         } catch (IOException e) {
@@ -78,7 +96,7 @@ public class Backend {
         try {
             FileWriter fw = new FileWriter(this.path, true);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(resturant.getName() + "," + resturant.getAddress() + "," + resturant.getPricing() + "," + resturant.getImagePath() + "\n");
+            bw.write(resturant.getName() + "," + resturant.getAddress() + "," + resturant.getPricing() + "," + resturant.getImagePath() + "," + resturant.getDescription() + "," + parseTagsToString(resturant.getTags()) + "\n");
             bw.close();
         }
         catch (IOException e) {
@@ -86,19 +104,26 @@ public class Backend {
         }
     }
 
+    // Adds a new resturant
     public void addData(String name, String address, String pricing, String imagePath) {
         Restaurant resturant = new Restaurant(name, address, pricing, imagePath.replace("\\", "/"));
         data.add(resturant);
         writeData(resturant);
     }
 
+    // Overloaded addData
     public void addData(Restaurant resturant) {
         data.add(resturant);
         writeData(resturant);
     }
 
-    public void editData(String name, boolean editAll, String newName, String newAddress, String newPricing, String newImagePath) {
+    public void setDescription(Restaurant restaurant, String description) {
+        restaurant.setDescription(description);
+        writeData(restaurant);
+    }
 
+    // Edits restaurant data for tag edits refer to addTag and removeTag
+    public void editData(String name, boolean editAll, String newName, String newAddress, String newPricing, String newImagePath) {
         for (Restaurant item : data) {
             if (item.getName().equals(name)) {
                 item.setName(newName);
@@ -140,6 +165,48 @@ public class Backend {
 
     }
 
+    // Parse tag lines from csv
+    private static ArrayList<String> parseTags(String tags) {
+        String[] tagData = tags.split(";");
+        ArrayList<String> tagList = new ArrayList<>();
+        for (String tag : tagData) {
+            tag = tag.trim();
+            if (tag.length() == 0) {
+                continue;
+            }
+            tagList.add(tag);
+        }
+        return tagList;
+    }
+
+    private static String parseTagsToString(ArrayList<String> tags) {
+        String tagString = "";
+        for (String tag : tags) {
+            tagString += tag + ";";
+        }
+        return tagString;
+    }
+
+    // Add tag
+    public void addTag(String name, String tag) {
+        for (Restaurant item : data) {
+            if (item.getName().equals(name)) {
+                item.getTags().add(tag);
+                writeData(item);
+            }
+        };
+    }
+
+    // Remove tag
+    public void removeTag(String name, String tag) {
+        for (Restaurant item : data) {
+            if (item.getName().equals(name)) {
+                item.getTags().remove(tag);
+                writeData(item);
+            }
+        }
+    }
+
     // Parse users file
     private void parseUser(String line) {
         String[] args = line.split(",");
@@ -161,6 +228,7 @@ public class Backend {
     }
 
 
+    // Read user files
     public void readUsers(String path) {
         // File reading
         try {
@@ -177,7 +245,8 @@ public class Backend {
         }
     }
 
-    private void update() {
+    // Updates the users file
+    private void updateUser() {
         try {
             FileWriter fw = new FileWriter("./users.csv", false);
             BufferedWriter bw = new BufferedWriter(fw);
@@ -205,14 +274,13 @@ public class Backend {
 
         User newUser = new User(user, password, 1);
         users.add(newUser);
-        update();
+        updateUser();
 
         return true;
     }
 
     // checks if the given username and password pair are within the users file, logging in if found
     public boolean login(String user, String password) {
-        
         for (User item : users) {
             if (item.getUsername().equals(user) && item.getPassword().equals(password)) {
                 return true;
@@ -224,7 +292,6 @@ public class Backend {
 
     // removes an item of String "name" from a file
     public void removeData(String name, boolean removeAll) {
-
         for (Restaurant item : data) {
             if (item.getName().equals(name)) {
                 data.remove(item);
@@ -288,6 +355,7 @@ public class Backend {
         return null;
     }
 
+    // Returns guest user
     public User getGuest() {
         return new User("Guest", "", 2);
     }
@@ -303,4 +371,27 @@ public class Backend {
     public String getSearch() {
         return search;
     }
+
+    // public static void main(String[] args) {
+    //     // Tag testing
+    //     ArrayList<String> tags = new ArrayList<String>();
+    //     tags.add("tag1");
+    //     tags.add("tag2");
+    //     tags.add("tag3");
+    //     tags.add("tag4");
+    //     tags.add("tag5");
+
+    //     // Restaurant testing
+    //     Restaurant resturant = new Restaurant("name", "address", "pricing", "imagePath", "Description", tags);
+    //     Backend backend = new Backend("./data.csv");
+    //     backend.addData(resturant);
+
+    //     // Tag retrieving
+    //     for (Restaurant item : backend.getData()) {
+    //         System.out.println(item.getName());
+    //         for (String tag : item.getTags()) {
+    //             System.out.print(tag + ";");
+    //         }
+    //     }
+    // }
 }
