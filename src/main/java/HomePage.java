@@ -83,6 +83,7 @@ public class HomePage extends JFrame {
         logOutButton.addActionListener(e -> {
             loggedIn = false;
             user = null;
+            totalRestaurants = 0;
             LoginPage loginPage = new LoginPage(backend, this);
             loginPage.setVisible(true);
             this.dispose();
@@ -296,8 +297,12 @@ public class HomePage extends JFrame {
                         Files.copy(imageFile.toPath(), file.toPath());
                         imagePath[0] = file.getPath();
                     } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(this, "Image loading failed", "Error", JOptionPane.ERROR_MESSAGE);
                         throw new RuntimeException(ex);
                     }
+                }
+                if (imagePath[0].isEmpty()) {
+                    imagePath[0] = "data/default-placeholder.png"; // A placeholder image in case of failure
                 }
             }
 
@@ -425,8 +430,12 @@ public class HomePage extends JFrame {
                         Files.copy(imageFile.toPath(), file.toPath());
                         imagePath[0] = file.getPath();
                     } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(this, "Image loading failed", "Error", JOptionPane.ERROR_MESSAGE);
                         throw new RuntimeException(ex);
                     }
+                }
+                if (imagePath[0].isEmpty()) {
+                    imagePath[0] = "data/default-placeholder.png"; // A placeholder image in case of failure
                 }
                 //Deletes old image file
                 File path = new File(oldPath);
