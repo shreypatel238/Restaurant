@@ -1,4 +1,4 @@
 Mcdonalds,123 Ronald street,$10 - $15,data/mcds.jpeg
 Subway,1 Bread Street,$15 - $30,data/subway.jpg
 KFC,100 KFC Place,$10 - $50,data/kfc.jpg
-Taco Bell,99 Taco Road,$5 - $25,data/tacobell.jpgname,address,pricing,imagePath,Description,tag1;tag2;tag3;tag4;tag5;
+Taco Bell,99 Taco Road,$5 - $25,data/tacobell.jpg

@@ -194,10 +194,17 @@ public class HomePage extends JFrame {
                 restImage = new JLabel(icon);
                 restImage.putClientProperty("imagePath", image.getPath());
             } catch (IOException e) {
-                restImage = new JLabel("Image load failed");
+                //if fails, sets placeholder image
+                JOptionPane.showMessageDialog(this, "Image load failed", "Error", JOptionPane.ERROR_MESSAGE);
+                ImageIcon icon = new ImageIcon("data/default-placeholder.png");
+                restImage = new JLabel(icon);
+                restImage.putClientProperty("imagePath", "data/default-placeholder.png");
             }
         } else {
-            restImage = new JLabel("No Image");
+            JOptionPane.showMessageDialog(this, "Image load failed", "Error", JOptionPane.ERROR_MESSAGE);
+            ImageIcon icon = new ImageIcon("data/default-placeholder.png");
+            restImage = new JLabel(icon);
+            restImage.putClientProperty("imagePath", "data/default-placeholder.png");
         }
 
         //sets font of the text
@@ -297,7 +304,7 @@ public class HomePage extends JFrame {
                         Files.copy(imageFile.toPath(), file.toPath());
                         imagePath[0] = file.getPath();
                     } catch (IOException ex) {
-                        JOptionPane.showMessageDialog(this, "Image loading failed", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Image load failed", "Error", JOptionPane.ERROR_MESSAGE);
                         throw new RuntimeException(ex);
                     }
                 }
