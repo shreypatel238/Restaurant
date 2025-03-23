@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import javax.swing.event.DocumentEvent;
 
 public class HomePage extends JFrame {
@@ -49,7 +50,7 @@ public class HomePage extends JFrame {
 
         //Creates a card for each restaurant in data
         backend.getData().forEach(item -> {
-            createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
+            createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()), item.getDescription(), item.getTags());
         });
 
         JScrollPane scrollPane = new JScrollPane(panel);
@@ -170,7 +171,7 @@ public class HomePage extends JFrame {
     }
 
     //Creates a card where the restaurant information will be displayed. Takes in a name, address, pricing, and image file
-    public void createCard(String name, String address, String pricing, File image) {
+    public void createCard(String name, String address, String pricing, File image, String description, ArrayList<String> tags) {
         //Creates main JPanel for the card. Sets size, border, layout and background colour
         JPanel restaurantPanel = new JPanel();
         restaurantPanel.setPreferredSize(new Dimension(300, 300));
@@ -245,6 +246,7 @@ public class HomePage extends JFrame {
 
         //Adds button for viewing details
         JButton viewDetails = new JButton("View Details");
+        viewDetails.addActionListener(e -> viewResDetails(name, address, pricing, image, description, tags));
 
         //adds all panels to main panel
         restaurantPanel.add(detailPanel, BorderLayout.CENTER);
@@ -270,16 +272,22 @@ public class HomePage extends JFrame {
         JTextField nameField = new JTextField(20);
         JTextField addressField = new JTextField(20);
         JTextField pricingField = new JTextField(20);
+        JTextField descriptionField = new JTextField();
+        JTextField tagsField = new JTextField();
         String[] imagePath = {""};
 
         //Creates a panel for a dialog box and adds respective JLabels and textfields and buttons
-        JPanel enterPanel = new JPanel(new GridLayout(4, 2));
+        JPanel enterPanel = new JPanel(new GridLayout(6, 2));
         enterPanel.add(new JLabel("Enter Restaurant Name:"));
         enterPanel.add(nameField);
         enterPanel.add(new JLabel("Enter Restaurant Address:"));
         enterPanel.add(addressField);
         enterPanel.add(new JLabel("Enter Restaurant Price Range (Ex. $10-$100):"));
         enterPanel.add(pricingField);
+        enterPanel.add(new JLabel("Enter Restaurant Description:"));
+        enterPanel.add(descriptionField);
+        enterPanel.add(new JLabel("Enter Tags (Ex. chinese,takeout,outdoors):"));
+        enterPanel.add(tagsField);
         enterPanel.add(new JLabel("Select an image"));
         JButton selectButton = new JButton("Select");
 
@@ -337,11 +345,27 @@ public class HomePage extends JFrame {
                 return;
             }
 
+            String description = descriptionField.getText().trim();
+            if (description.isEmpty()) {
+                description = "No description provided";
+            }
+
+            String[] tags = tagsField.getText().trim().split(",");
+            ArrayList<String> tagsList = new ArrayList<>();
+            if (tags.length == 0) {
+                tagsList.add("No tags provided");
+            } else {
+                for (String x : tags) {
+                    tagsList.add(x);
+                }
+            }
+
+
             //adds data to the csv for future use
-            backend.addData(name, address, pricing, imagePath[0]); //Add to CSV
+            backend.addData(name, address, pricing, imagePath[0], description, tagsList); //Add to CSV
 
             //runs createCard function to create the actual card
-            createCard(name, address, pricing, new File(imagePath[0]));
+            createCard(name, address, pricing, new File(imagePath[0]), description, tagsList);
         }
     }
 
@@ -469,10 +493,16 @@ public class HomePage extends JFrame {
                     imageLabel.putClientProperty("imagePath", imagePath[0]);
                     backend.editData(oldName, false, oldName, oldAddress, oldPricing, imagePath[0]);
                 } catch (IOException e) {
-                    imageLabel = new JLabel("Image load failed");
+                    JOptionPane.showMessageDialog(this, "Image load failed", "Error", JOptionPane.ERROR_MESSAGE);
+                    ImageIcon icon = new ImageIcon("data/default-placeholder.png");
+                    imageLabel = new JLabel(icon);
+                    imageLabel.putClientProperty("imagePath", "data/default-placeholder.png");
                 }
             } else {
-                imageLabel = new JLabel("No Image");
+                JOptionPane.showMessageDialog(this, "Image load failed", "Error", JOptionPane.ERROR_MESSAGE);
+                ImageIcon icon = new ImageIcon("data/default-placeholder.png");
+                imageLabel = new JLabel(icon);
+                imageLabel.putClientProperty("imagePath", "data/default-placeholder.png");
             }
         }
         //recalculates and repaints screen
@@ -491,14 +521,74 @@ public class HomePage extends JFrame {
         //reloads all cards and displays them again
         if(!(backend.getAltData().isEmpty())&&(backend.getSearch().equals(currentSearch))) {
             backend.getAltData().forEach(item -> {
-                createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
+                createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()), item.getDescription(), item.getTags());
             });
         }
         else{
             backend.getData().forEach(item -> {
-                createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()));
+                createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()), item.getDescription(), item.getTags());
             });
         }
+    }
+
+    public void viewResDetails(String name, String address, String pricing, File image, String description, ArrayList<String> tags) {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        frame.setSize(600, 500);
+        frame.setTitle("Details");
+
+        JPanel panel = new JPanel(new BorderLayout());
+        JScrollPane scrollPane = new JScrollPane(panel);
+        frame.add(scrollPane);
+
+        JLabel nameLabel = new JLabel(name);
+        JLabel addressLabel = new JLabel(address);
+        JLabel pricingLabel = new JLabel(pricing);
+        JLabel descriptionLabel = new JLabel(description);
+        String tagString = "";
+        for (String x : tags) {
+            tagString = x + ", ";
+        }
+        JLabel tagsLabel = new JLabel(tagString);
+
+        JLabel imageLabel;
+        if (image != null) {
+            try {
+                BufferedImage img = ImageIO.read(image);
+                ImageIcon icon = new ImageIcon(img.getScaledInstance(300, 200, Image.SCALE_SMOOTH));
+                imageLabel = new JLabel(icon);
+                imageLabel.putClientProperty("imagePath", image.getPath());
+            } catch (IOException e) {
+                //if fails, sets placeholder image
+                JOptionPane.showMessageDialog(this, "Image load failed", "Error", JOptionPane.ERROR_MESSAGE);
+                ImageIcon icon = new ImageIcon("data/default-placeholder.png");
+                imageLabel = new JLabel(icon);
+                imageLabel.putClientProperty("imagePath", "data/default-placeholder.png");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Image load failed", "Error", JOptionPane.ERROR_MESSAGE);
+            ImageIcon icon = new ImageIcon("data/default-placeholder.png");
+            imageLabel = new JLabel(icon);
+            imageLabel.putClientProperty("imagePath", "data/default-placeholder.png");
+        }
+
+        JPanel imagePanel = new JPanel();
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imagePanel.add(imageLabel);
+
+        JPanel detailPanel = new JPanel();
+        detailPanel.setLayout(new BoxLayout(detailPanel, BoxLayout.Y_AXIS));
+        detailPanel.add(nameLabel);
+        detailPanel.add(pricingLabel);
+        detailPanel.add(addressLabel);
+        detailPanel.add(descriptionLabel);
+        detailPanel.add(tagsLabel);
+        detailPanel.setBorder(BorderFactory.createEmptyBorder(0, 5, 0, 5));
+
+        panel.add(imagePanel, BorderLayout.PAGE_START);
+        panel.add(detailPanel, BorderLayout.CENTER);
+        frame.add(panel);
+        frame.setVisible(true);
     }
 
     public static void main(String[] args) {

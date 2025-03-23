@@ -105,8 +105,8 @@ public class Backend {
     }
 
     // Adds a new resturant
-    public void addData(String name, String address, String pricing, String imagePath) {
-        Restaurant resturant = new Restaurant(name, address, pricing, imagePath.replace("\\", "/"));
+    public void addData(String name, String address, String pricing, String imagePath, String description, ArrayList<String> tags) {
+        Restaurant resturant = new Restaurant(name, address, pricing, imagePath.replace("\\", "/"), description, tags);
         data.add(resturant);
         writeData(resturant);
     }
