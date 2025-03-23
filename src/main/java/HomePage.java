@@ -355,7 +355,10 @@ public class HomePage extends JFrame {
         //Deletes file when card is removed
         String path = (String) imageLabel.getClientProperty("imagePath");
         File filePath = new File(path);
-        filePath.delete();
+        System.out.println(filePath.getPath());
+        if (!filePath.getAbsolutePath().endsWith("data" + File.separator + "default-placeholder.png")) {
+            filePath.delete();
+        }
 
         //removes the card and subtracts 1 restaurant. Also removes the data from the database
         panel.remove(restaurantPanel);
@@ -451,7 +454,9 @@ public class HomePage extends JFrame {
                 }
                 //Deletes old image file
                 File path = new File(oldPath);
-                path.delete();
+                if (!path.getAbsolutePath().endsWith("data" + File.separator + "default-placeholder.png")) {
+                    path.delete();
+                }
             }
 
             if (imageFile != null) {
@@ -477,7 +482,7 @@ public class HomePage extends JFrame {
 
     //function to refresh the page so cards are positioned accordingly
     public void refreshPage() {
-        //removes all panels, resets contraints, and resets total restaurant count
+        //removes all panels, resets constraints, and resets total restaurant count
         panel.removeAll();
         constraints = new GridBagConstraints();
         constraints.insets = new Insets(10, 10, 10, 10);
