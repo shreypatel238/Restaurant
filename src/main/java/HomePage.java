@@ -229,7 +229,7 @@ public class HomePage extends JFrame {
 
             //When clicked, the remove and update buttons will run their respective functions
             removeButton.addActionListener(e -> removeRestaurant(restaurantPanel));
-            updateButton.addActionListener(e -> editRestaurant(restaurantPanel));
+            updateButton.addActionListener(e -> editRestaurant(restaurantPanel, description));
 
             //adds it to the right side of the panel
             editPanel.add(menuBar, BorderLayout.LINE_END);
@@ -242,11 +242,21 @@ public class HomePage extends JFrame {
         detailPanel.add(restName);
         detailPanel.add(restPricing);
         detailPanel.add(restAddress);
+        detailPanel.add(restAddress);
         detailPanel.setBackground(new Color(245, 224, 130));
 
         //Adds button for viewing details
         JButton viewDetails = new JButton("View Details");
-        viewDetails.addActionListener(e -> viewResDetails(name, address, pricing, image, description, tags));
+        viewDetails.addActionListener(e -> {
+            Restaurant restaurant = null;
+            for (Restaurant x : backend.getData()) {
+                if (x.getName().equals(name)) {
+                    restaurant = new Restaurant(x.getName(), x.getAddress(), x.getPricing(), x.getImagePath(), x.getDescription(), x.getTags());
+                }
+            }
+            assert restaurant != null;
+            viewResDetails(restaurant, image);
+        });
 
         //adds all panels to main panel
         restaurantPanel.add(detailPanel, BorderLayout.CENTER);
@@ -360,7 +370,6 @@ public class HomePage extends JFrame {
                 }
             }
 
-
             //adds data to the csv for future use
             backend.addData(name, address, pricing, imagePath[0], description, tagsList); //Add to CSV
 
@@ -398,9 +407,9 @@ public class HomePage extends JFrame {
     }
 
     //edits restaurant data
-    public void editRestaurant(JPanel restaurantPanel) {
+    public void editRestaurant(JPanel restaurantPanel, String description) {
         //asks what field the user wants to change and checks if it's empty or not
-        String[] options = {"Name", "Address", "Pricing", "Image"};
+        String[] options = {"Name", "Address", "Pricing", "Image", "Description", "Tags"};
         JComboBox<String> comboBox = new JComboBox<>(options);
         int result = JOptionPane.showConfirmDialog(this, comboBox, "Which field would you like to edit?", JOptionPane.OK_CANCEL_OPTION);
         String type = (String) comboBox.getSelectedItem();
@@ -434,19 +443,18 @@ public class HomePage extends JFrame {
         String oldAddress = addressLabel.getText().replace("Address: ", "");
         String oldPricing = pricingLabel.getText().replace("Price Range: ", "");
         String oldPath = (String) imageLabel.getClientProperty("imagePath");
-
-        System.out.println(type);
+        System.out.println(description);
 
         //depending on which field the user wants to change, sets the corresponding label to the new value, and edits the database to reflect that
         if (type.equals("name") || type.equals("Name")) {
             nameLabel.setText(newField);
-            backend.editData(oldName, false, newField, oldAddress, oldPricing, oldPath);
+            backend.editData(oldName, false, newField, oldAddress, oldPricing, oldPath, description);
         } else if (type.equals("Address")) {
             addressLabel.setText(newField);
-            backend.editData(oldName, false, oldName, newField, oldPricing, oldPath);
+            backend.editData(oldName, false, oldName, newField, oldPricing, oldPath, description);
         } else if (type.equals("pricing") || type.equals("Pricing")) {
             pricingLabel.setText(newField);
-            backend.editData(oldName, false, oldName, oldAddress, newField, oldPath);
+            backend.editData(oldName, false, oldName, oldAddress, newField, oldPath, description);
         } else if (type.equals("image") || type.equals("Image")) {
             //if user wants to change image, will ask for a new image file and assign it to the JLabel
             String[] imagePath = {""};
@@ -491,7 +499,7 @@ public class HomePage extends JFrame {
                     imageLabel.setIcon(icon);
                     imageLabel.setText(null);
                     imageLabel.putClientProperty("imagePath", imagePath[0]);
-                    backend.editData(oldName, false, oldName, oldAddress, oldPricing, imagePath[0]);
+                    backend.editData(oldName, false, oldName, oldAddress, oldPricing, imagePath[0], description);
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(this, "Image load failed", "Error", JOptionPane.ERROR_MESSAGE);
                     ImageIcon icon = new ImageIcon("data/default-placeholder.png");
@@ -504,6 +512,8 @@ public class HomePage extends JFrame {
                 imageLabel = new JLabel(icon);
                 imageLabel.putClientProperty("imagePath", "data/default-placeholder.png");
             }
+        } else if (type.equals("description") || type.equals("Description")) {
+            backend.editData(oldName, false, oldName, oldAddress, oldPricing, oldPath, newField);
         }
         //recalculates and repaints screen
         panel.revalidate();
@@ -531,7 +541,7 @@ public class HomePage extends JFrame {
         }
     }
 
-    public void viewResDetails(String name, String address, String pricing, File image, String description, ArrayList<String> tags) {
+    public void viewResDetails(Restaurant restaurant, File image) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(600, 500);
@@ -541,15 +551,24 @@ public class HomePage extends JFrame {
         JScrollPane scrollPane = new JScrollPane(panel);
         frame.add(scrollPane);
 
-        JLabel nameLabel = new JLabel(name);
-        JLabel addressLabel = new JLabel(address);
-        JLabel pricingLabel = new JLabel(pricing);
-        JLabel descriptionLabel = new JLabel(description);
+        JLabel nameLabel = new JLabel(restaurant.getName());
+        JLabel pricingLabel = new JLabel(restaurant.getPricing());
+        JLabel addressLabel = new JLabel(restaurant.getAddress());
+        JLabel descriptionLabel = new JLabel("<html>" + restaurant.getDescription() + "</html>");
         String tagString = "";
-        for (String x : tags) {
+        for (String x : restaurant.getTags()) {
+            System.out.println(x);
             tagString = x + ", ";
         }
         JLabel tagsLabel = new JLabel(tagString);
+
+        nameLabel.setFont(new Font("Arial", Font.BOLD, 40));
+        addressLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        pricingLabel.setFont(new Font("Arial", Font.PLAIN, 25));
+        descriptionLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pricingLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        addressLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel imageLabel;
         if (image != null) {

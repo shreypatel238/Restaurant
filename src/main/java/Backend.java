@@ -106,15 +106,15 @@ public class Backend {
 
     // Adds a new resturant
     public void addData(String name, String address, String pricing, String imagePath, String description, ArrayList<String> tags) {
-        Restaurant resturant = new Restaurant(name, address, pricing, imagePath.replace("\\", "/"), description, tags);
-        data.add(resturant);
-        writeData(resturant);
+        Restaurant restaurant = new Restaurant(name, address, pricing, imagePath.replace("\\", "/"), description, tags);
+        data.add(restaurant);
+        writeData(restaurant);
     }
 
     // Overloaded addData
-    public void addData(Restaurant resturant) {
-        data.add(resturant);
-        writeData(resturant);
+    public void addData(Restaurant restaurant) {
+        data.add(restaurant);
+        writeData(restaurant);
     }
 
     public void setDescription(Restaurant restaurant, String description) {
@@ -123,13 +123,14 @@ public class Backend {
     }
 
     // Edits restaurant data for tag edits refer to addTag and removeTag
-    public void editData(String name, boolean editAll, String newName, String newAddress, String newPricing, String newImagePath) {
+    public void editData(String name, boolean editAll, String newName, String newAddress, String newPricing, String newImagePath, String newDescription) {
         for (Restaurant item : data) {
             if (item.getName().equals(name)) {
                 item.setName(newName);
                 item.setAddress(newAddress);
                 item.setPricing(newPricing);
                 item.setImagePath(newImagePath);
+                item.setDescription(newDescription);
                 if (!editAll) {
                     break;
                 }
@@ -141,6 +142,7 @@ public class Backend {
                 item.setAddress(newAddress);
                 item.setPricing(newPricing);
                 item.setImagePath(newImagePath);
+                item.setDescription(newDescription);
                 if (!editAll) {
                     break;
                 }
@@ -152,7 +154,7 @@ public class Backend {
             BufferedWriter bw = new BufferedWriter(fw);
             data.forEach(item -> {
                 try {
-                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "\n");
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription() + "," + parseTagsToString(item.getTags()) + "\n");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -307,7 +309,7 @@ public class Backend {
             BufferedWriter bw = new BufferedWriter(fw);
             data.forEach(item -> {
                 try {
-                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "\n");
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription() + "," + parseTagsToString(item.getTags()) + "\n");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
