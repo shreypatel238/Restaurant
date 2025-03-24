@@ -294,7 +294,7 @@ public class HomePage extends JFrame {
         enterPanel.add(addressField);
         enterPanel.add(new JLabel("Enter Restaurant Price Range (Ex. $10-$100):"));
         enterPanel.add(pricingField);
-        enterPanel.add(new JLabel("Enter Restaurant Description:"));
+        enterPanel.add(new JLabel("Enter Restaurant Description: (DO NOT PUT ANY COMMAS WHATSOEVER)"));
         enterPanel.add(descriptionField);
         enterPanel.add(new JLabel("Enter Tags (Ex. chinese,takeout,outdoors):"));
         enterPanel.add(tagsField);
@@ -409,7 +409,7 @@ public class HomePage extends JFrame {
     //edits restaurant data
     public void editRestaurant(JPanel restaurantPanel, String description) {
         //asks what field the user wants to change and checks if it's empty or not
-        String[] options = {"Name", "Address", "Pricing", "Image", "Description", "Tags"};
+        String[] options = {"Name", "Address", "Pricing", "Image", "Description (DON'T WRITE COMMAS)", "Tags"};
         JComboBox<String> comboBox = new JComboBox<>(options);
         int result = JOptionPane.showConfirmDialog(this, comboBox, "Which field would you like to edit?", JOptionPane.OK_CANCEL_OPTION);
         String type = (String) comboBox.getSelectedItem();
@@ -541,14 +541,20 @@ public class HomePage extends JFrame {
         }
     }
 
+    //Creates popup for restaurant details
     public void viewResDetails(Restaurant restaurant, File image) {
+        //Creating frame
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(600, 500);
         frame.setTitle("Details");
 
+        //Creating main panel
         JPanel panel = new JPanel(new BorderLayout());
+        panel.setPreferredSize(new Dimension(600, 500));
         JScrollPane scrollPane = new JScrollPane(panel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         frame.add(scrollPane);
 
         JLabel nameLabel = new JLabel(restaurant.getName());
@@ -606,7 +612,6 @@ public class HomePage extends JFrame {
 
         panel.add(imagePanel, BorderLayout.PAGE_START);
         panel.add(detailPanel, BorderLayout.CENTER);
-        frame.add(panel);
         frame.setVisible(true);
     }
 
