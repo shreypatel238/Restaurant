@@ -123,7 +123,7 @@ public class Backend {
     }
 
     // Edits restaurant data for tag edits refer to addTag and removeTag
-    public void editData(String name, boolean editAll, String newName, String newAddress, String newPricing, String newImagePath, String newDescription) {
+    public void editData(String name, boolean editAll, String newName, String newAddress, String newPricing, String newImagePath, String newDescription,ArrayList<String> tags) {
         for (Restaurant item : data) {
             if (item.getName().equals(name)) {
                 item.setName(newName);
@@ -131,6 +131,7 @@ public class Backend {
                 item.setPricing(newPricing);
                 item.setImagePath(newImagePath);
                 item.setDescription(newDescription);
+                item.setTags(tags);
                 if (!editAll) {
                     break;
                 }
@@ -143,6 +144,7 @@ public class Backend {
                 item.setPricing(newPricing);
                 item.setImagePath(newImagePath);
                 item.setDescription(newDescription);
+                item.setTags(tags);
                 if (!editAll) {
                     break;
                 }
@@ -336,6 +338,9 @@ public class Backend {
                 }
 
                 else if(pricingcheck&&item.getPricing().contains(filter) && !altData.contains(item)) {
+                    altData.add(item);
+                }
+                else if(item.getTags().contains(filter) && !altData.contains(item)) {
                     altData.add(item);
                 }
             }
