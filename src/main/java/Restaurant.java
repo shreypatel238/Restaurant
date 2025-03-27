@@ -88,4 +88,6 @@ public class Restaurant {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public void setTags(ArrayList<String> tags) {this.tags = tags;}
 }
