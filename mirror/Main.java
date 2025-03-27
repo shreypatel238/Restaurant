@@ -1,11 +1,20 @@
-//public class Main {
-//    public static void main(String[] args) {
-//        Backend b = new Backend("./data.csv");
-//        b.getData().forEach(item -> {
-//            System.out.println(item.getName() + " " + item.getAddress() + " " + item.getPricing());
-//        });
+// import java.io.File;
+// import java.util.ArrayList;
 //
-//        b.removeData("Test", false);
-//        b.editData("Test2", false, "Tester", "Nowhere", "10000000");
-//    }
-//}
+// public class Main {
+//     public static void main(String[] args) {
+//         Backend backend = new Backend("./ved");
+//         ArrayList<String> tags = new ArrayList<>();
+//         tags.add("Ved");
+//         tags.add("Villain");
+//         tags.add("Space");
+//         backend.addData("Ved","Ved","ved","data" + File.separator + "default-placeholder.png","Ved,Was",tags);
+//         tags.add("Villain");
+////         backend.editData("Ved",false,"Ved","data" + File.separator + "default-placeholder.png","Ved","Ved","Ved",tags);
+//         ArrayList<Restaurant> restaurants  = backend.getData();
+//         for (Restaurant r : restaurants) {
+//             System.out.println(r.getDescription());
+//         }
+//
+//     }
+// }
