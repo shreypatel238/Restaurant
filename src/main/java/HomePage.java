@@ -309,9 +309,9 @@ public class HomePage extends JFrame {
         enterPanel.add(addressField);
         enterPanel.add(new JLabel("Enter Restaurant Price Range (Ex. $10-$100):"));
         enterPanel.add(pricingField);
-        enterPanel.add(new JLabel("Enter Restaurant Description: (DO NOT PUT ANY COMMAS WHATSOEVER)"));
+        enterPanel.add(new JLabel("Enter Restaurant Description:"));
         enterPanel.add(descriptionField);
-        enterPanel.add(new JLabel("Enter Tags (Ex. mexican takeout outdoors (put spaces in between tags)):"));
+        enterPanel.add(new JLabel("Enter Tags (Ex. mexican takeout outdoors):"));
         enterPanel.add(tagsField);
         enterPanel.add(new JLabel("Select an image"));
         JButton selectButton = new JButton("Select");
@@ -378,7 +378,7 @@ public class HomePage extends JFrame {
             if (description.isEmpty()) {
                 description = "No description provided";
             }
-            description = description.replaceAll(",", " ");
+//            description = description.replaceAll(",", " ");
 
             String[] tags = tagsField.getText().trim().split(",");
             ArrayList<String> tagsList = new ArrayList<>();
@@ -429,7 +429,7 @@ public class HomePage extends JFrame {
     //edits restaurant data
     public void editRestaurant(JPanel restaurantPanel, String description, ArrayList<String> tags) {
         //asks what field the user wants to change and checks if it's empty or not
-        String[] options = {"Name", "Address", "Pricing", "Image", "Description (DON'T WRITE COMMAS)", "Tags (DON'T WRITE COMMAS, ONLY SPACES)"};
+        String[] options = {"Name", "Address", "Pricing", "Image", "Description", "Tags"};
         JComboBox<String> comboBox = new JComboBox<>(options);
         int result = JOptionPane.showConfirmDialog(this, comboBox, "Which field would you like to edit?", JOptionPane.OK_CANCEL_OPTION);
         String type = (String) comboBox.getSelectedItem();
