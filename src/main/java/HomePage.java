@@ -236,6 +236,8 @@ public class HomePage extends JFrame {
             restaurantPanel.add(editPanel, BorderLayout.PAGE_START);
         }
 
+
+
         //Creates panel for the details of the restaurant and adds the JLabels
         JPanel detailPanel = new JPanel(new GridLayout(4, 1));
         detailPanel.add(restImage);
@@ -438,11 +440,13 @@ public class HomePage extends JFrame {
         JLabel addressLabel = (JLabel) component.getComponent(3);
         JLabel pricingLabel = (JLabel) component.getComponent(2);
         JLabel imageLabel = (JLabel) component.getComponent(0);
+        JLabel tagsLabel = (JLabel) component.getComponent(4);
         //Stores JLabel values into variables
         String oldName = nameLabel.getText().replace("Name: ", "");
         String oldAddress = addressLabel.getText().replace("Address: ", "");
         String oldPricing = pricingLabel.getText().replace("Price Range: ", "");
         String oldPath = (String) imageLabel.getClientProperty("imagePath");
+        String oldTags = tagsLabel.getText().replace("Tags: ", "");
         System.out.println(description);
 
         //depending on which field the user wants to change, sets the corresponding label to the new value, and edits the database to reflect that
@@ -451,10 +455,10 @@ public class HomePage extends JFrame {
             backend.editData(oldName, false, newField, oldAddress, oldPricing, oldPath, description);
         } else if (type.equals("Address")) {
             addressLabel.setText(newField);
-            backend.editData(oldName, false, oldName, newField, oldPricing, oldPath, description);
+            backend.editData(oldName, false, oldName, newField, oldPricing, oldPath, description,backend.getTags(oldTags));
         } else if (type.equals("pricing") || type.equals("Pricing")) {
             pricingLabel.setText(newField);
-            backend.editData(oldName, false, oldName, oldAddress, newField, oldPath, description);
+            backend.editData(oldName, false, oldName, oldAddress, newField, oldPath, description,backend.getTags(oldTags));
         } else if (type.equals("image") || type.equals("Image")) {
             //if user wants to change image, will ask for a new image file and assign it to the JLabel
             String[] imagePath = {""};
@@ -499,7 +503,7 @@ public class HomePage extends JFrame {
                     imageLabel.setIcon(icon);
                     imageLabel.setText(null);
                     imageLabel.putClientProperty("imagePath", imagePath[0]);
-                    backend.editData(oldName, false, oldName, oldAddress, oldPricing, imagePath[0], description);
+                    backend.editData(oldName, false, oldName, oldAddress, oldPricing, imagePath[0], description,backend.getTags(oldTags));
                 } catch (IOException e) {
                     JOptionPane.showMessageDialog(this, "Image load failed", "Error", JOptionPane.ERROR_MESSAGE);
                     ImageIcon icon = new ImageIcon("data/default-placeholder.png");
@@ -513,7 +517,10 @@ public class HomePage extends JFrame {
                 imageLabel.putClientProperty("imagePath", "data/default-placeholder.png");
             }
         } else if (type.equals("description") || type.equals("Description")) {
-            backend.editData(oldName, false, oldName, oldAddress, oldPricing, oldPath, newField);
+            backend.editData(oldName, false, oldName, oldAddress, oldPricing, oldPath, newField,backend.getTags(oldTags));
+        } else if (type.equals("tags") || type.equals("Tags")) {
+            backend.editData(oldName, false, oldName, oldAddress, oldPricing, oldPath, description,backend.getTags(newField));
+
         }
         //recalculates and repaints screen
         panel.revalidate();
@@ -546,7 +553,7 @@ public class HomePage extends JFrame {
         //Creating frame
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.setSize(600, 500);
+        frame.setSize(700, 500);
         frame.setTitle("Details");
 
         //Creating main panel

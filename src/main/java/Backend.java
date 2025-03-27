@@ -401,4 +401,26 @@ public class Backend {
     //         }
     //     }
     // }
+    public String getTags(ArrayList<String> data) {
+        if(data.isEmpty()) {
+            return "";
+        }else{
+            String tagstext=" ";
+            for(String tag : data) {
+                tagstext += tag + " ";
+            }
+            return tagstext;
+        }
+    }
+    public ArrayList<String> getTags(String data) {
+        ArrayList<String> tags=new ArrayList<>();
+        if(data.isEmpty()) {
+            String[] data1 = data.split(" ");
+            for(String tag : data1) {
+                tags.add(tag);
+            }
+            return tags;
+        }
+        return tags;
+    }
 }
