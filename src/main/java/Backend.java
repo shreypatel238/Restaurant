@@ -41,7 +41,7 @@ public class Backend {
                 description = args[4];
             }
             if (args.length == 6) {
-                description = args[4];
+                description = args[4].replace("~",",");
                 tagData = args[5];
             }
 
@@ -96,7 +96,7 @@ public class Backend {
         try {
             FileWriter fw = new FileWriter(this.path, true);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(resturant.getName() + "," + resturant.getAddress() + "," + resturant.getPricing() + "," + resturant.getImagePath() + "," + resturant.getDescription() + "," +  reformmatedTags(resturant.getTags())+ "\n");
+            bw.write(resturant.getName() + "," + resturant.getAddress() + "," + resturant.getPricing() + "," + resturant.getImagePath() + "," + resturant.getDescription().replace(",","~") + "," +  reformmatedTags(resturant.getTags())+ "\n");
             bw.close();
         }
         catch (IOException e) {
@@ -154,7 +154,7 @@ public class Backend {
             BufferedWriter bw = new BufferedWriter(fw);
             data.forEach(item -> {
                 try {
-                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription() + "," + parseTagsToString(item.getTags()) + "\n");
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription().replace(",","~") + "," + parseTagsToString(item.getTags()) + "\n");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -199,7 +199,7 @@ public class Backend {
             BufferedWriter bw = new BufferedWriter(fw);
             data.forEach(item -> {
                 try {
-                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription() + "," + reformmatedTags(item.getTags()) + "\n");
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription().replace(",","~") + "," + reformmatedTags(item.getTags()) + "\n");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -354,7 +354,7 @@ public class Backend {
             BufferedWriter bw = new BufferedWriter(fw);
             data.forEach(item -> {
                 try {
-                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription() + "," + parseTagsToString(item.getTags()) + "\n");
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription().replace(",", "~") + "," + parseTagsToString(item.getTags()) + "\n");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

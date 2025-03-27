@@ -8,9 +8,13 @@
 //         tags.add("Ved");
 //         tags.add("Villain");
 //         tags.add("Space");
-//         backend.addData("Ved","Ved","ved","data" + File.separator + "default-placeholder.png","Ved",tags);
+//         backend.addData("Ved","Ved","ved","data" + File.separator + "default-placeholder.png","Ved,Was",tags);
 //         tags.add("Villain");
-//         backend.editData("Ved",false,"Ved","data" + File.separator + "default-placeholder.png","Ved","Ved","Ved",tags);
+////         backend.editData("Ved",false,"Ved","data" + File.separator + "default-placeholder.png","Ved","Ved","Ved",tags);
+//         ArrayList<Restaurant> restaurants  = backend.getData();
+//         for (Restaurant r : restaurants) {
+//             System.out.println(r.getDescription());
+//         }
 //
 //     }
 // }
