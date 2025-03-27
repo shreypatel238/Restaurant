@@ -96,7 +96,7 @@ public class Backend {
         try {
             FileWriter fw = new FileWriter(this.path, true);
             BufferedWriter bw = new BufferedWriter(fw);
-            bw.write(resturant.getName() + "," + resturant.getAddress() + "," + resturant.getPricing() + "," + resturant.getImagePath() + "," + resturant.getDescription() + "," + parseTagsToString(resturant.getTags()) + "\n");
+            bw.write(resturant.getName() + "," + resturant.getAddress() + "," + resturant.getPricing() + "," + resturant.getImagePath() + "," + resturant.getDescription() + "," +  reformmatedTags(resturant.getTags())+ "\n");
             bw.close();
         }
         catch (IOException e) {
@@ -166,10 +166,55 @@ public class Backend {
         }
 
     }
+    public void editData(String name, boolean editAll, String newName, String newAddress, String newPricing, String newImagePath, String newDescription, ArrayList<String> tags) {
+        for (Restaurant item : data) {
+            if (item.getName().equals(name)) {
+                item.setName(newName);
+                item.setAddress(newAddress);
+                item.setPricing(newPricing);
+                item.setImagePath(newImagePath);
+                item.setDescription(newDescription);
+                item.setTags(tags);
+                if (!editAll) {
+                    break;
+                }
+            }
+        }
+        for (Restaurant item : altData) {
+            if (item.getName().equals(name)) {
+                item.setName(newName);
+                item.setAddress(newAddress);
+                item.setPricing(newPricing);
+                item.setImagePath(newImagePath);
+                item.setDescription(newDescription);
+                item.setTags(tags);
+                if (!editAll) {
+                    break;
+                }
+            }
+        }
+
+        try {
+            FileWriter fw = new FileWriter(this.path, false);
+            BufferedWriter bw = new BufferedWriter(fw);
+            data.forEach(item -> {
+                try {
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription() + "," + reformmatedTags(tags) + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+            bw.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     // Parse tag lines from csv
     private static ArrayList<String> parseTags(String tags) {
-        String[] tagData = tags.split(";");
+        String[] tagData = tags.split(" ");
         ArrayList<String> tagList = new ArrayList<>();
         for (String tag : tagData) {
             tag = tag.trim();
@@ -396,4 +441,16 @@ public class Backend {
     //         }
     //     }
     // }
+    public String reformmatedTags(ArrayList<String> tags) {
+        if(tags==null||tags.isEmpty()) {
+            return "";
+        }else{
+            String text = "";
+            for (String tag : tags) {
+                text += tag + " ";
+
+            }
+            return text;
+        }
+    }
 }
