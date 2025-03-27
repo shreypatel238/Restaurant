@@ -199,7 +199,7 @@ public class Backend {
             BufferedWriter bw = new BufferedWriter(fw);
             data.forEach(item -> {
                 try {
-                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription() + "," + reformmatedTags(tags) + "\n");
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription() + "," + reformmatedTags(item.getTags()) + "\n");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
