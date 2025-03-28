@@ -10,7 +10,7 @@ public class LoginPage extends JFrame {
         this.homePage = homePage;
 
         //Creates JFrame
-        setTitle("Register or Log In");
+        setTitle("Restaurant Catalog: Register or Log In");
         setSize(400, 300);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -19,7 +19,12 @@ public class LoginPage extends JFrame {
 
     private void createLoginPage() {
         //Creates main JPanel
-        JPanel loginWindow = new JPanel(new GridLayout(2, 1));
+        JPanel loginWindow = new JPanel(new GridLayout(3, 1));
+
+        //Create and add the welcome message at the top
+        JLabel welcomeMessage = new JLabel("<html>Welcome to Restaurant Catalog!<br>Please log in or register.</html>", SwingConstants.CENTER);
+        welcomeMessage.setFont(new Font("Arial", Font.PLAIN, 16));
+        loginWindow.add(welcomeMessage);  // Add the welcome message label to the login window
 
         //Register Panel
         //Creates JPanel for registering and sets gridlayout
@@ -90,10 +95,8 @@ public class LoginPage extends JFrame {
         loginPanel.add(loginPassField);
         loginPanel.add(loginButton);
         loginPanel.add(guestButton);
-        
-    
-        
-        //Adds to main JPanel and main JFrame of Login Page
+
+        // Adds register and login panels to main JPanel and main JFrame of Login Page
         loginWindow.add(registerPanel);
         loginWindow.add(loginPanel);
         add(loginWindow);
