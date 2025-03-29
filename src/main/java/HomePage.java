@@ -225,28 +225,33 @@ public class HomePage extends JFrame {
         restAddress.setFont(new Font("", Font.BOLD, 15));
         restPricing.setFont(new Font("", Font.BOLD, 20));
 
+
+
+        //Creates a panel dedicated to the edit button
+        JPanel editPanel = new JPanel(new BorderLayout());
+        editPanel.setBackground(new Color(245, 224, 130));
+        JMenuBar menuBar = new JMenuBar();
+        JMenuItem favButton = new JMenuItem("Fav");
+        menuBar.add(favButton);
+        favButton.addActionListener(e -> favRestaurant());
+
         //If user is admin, adds edit and remove buttons
         if (user.getLevel() == 0) {
-            //Creates a panel dedicated to the edit button
-            JPanel editPanel = new JPanel(new BorderLayout());
-            editPanel.setBackground(new Color(245, 224, 130));
-            JMenuBar menuBar = new JMenuBar();
             //Creates a JMenu item and assigns to JMenuItem's to it: update and remove
-            JMenu dots = new JMenu("...");
+            JMenu dotsButton = new JMenu("...");
             JMenuItem updateButton = new JMenuItem("Update");
             JMenuItem removeButton = new JMenuItem("Remove");
-            dots.add(updateButton);
-            dots.add(removeButton);
-            menuBar.add(dots);
+            dotsButton.add(updateButton);
+            dotsButton.add(removeButton);
+            menuBar.add(dotsButton);
 
             //When clicked, the remove and update buttons will run their respective functions
             removeButton.addActionListener(e -> removeRestaurant(restaurantPanel));
             updateButton.addActionListener(e -> editRestaurant(restaurantPanel, description, tags));
-
-            //adds it to the right side of the panel
-            editPanel.add(menuBar, BorderLayout.LINE_END);
-            restaurantPanel.add(editPanel, BorderLayout.PAGE_START);
         }
+        //adds it to the right side of the panel
+        editPanel.add(menuBar, BorderLayout.LINE_END);
+        restaurantPanel.add(editPanel, BorderLayout.PAGE_START);
 
         //Creates panel for the details of the restaurant and adds the JLabels
         JPanel detailPanel = new JPanel();
@@ -643,6 +648,9 @@ public class HomePage extends JFrame {
         panel.add(imagePanel, BorderLayout.PAGE_START);
         panel.add(detailPanel, BorderLayout.CENTER);
         frame.setVisible(true);
+    }
+
+    public void favRestaurant() {
     }
 
     public static void main(String[] args) {
