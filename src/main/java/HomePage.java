@@ -175,7 +175,7 @@ public class HomePage extends JFrame {
     public void createCard(String name, String address, String pricing, File image, String description, ArrayList<String> tags) {
         //Creates main JPanel for the card. Sets size, border, layout and background colour. Size of panel depends on permission level
         JPanel restaurantPanel = new JPanel(new BorderLayout());
-        if (user.getLevel() == 0) {
+        if (user.getLevel() == 0 || user.getLevel() == 1) {
             restaurantPanel.setPreferredSize(new Dimension(300, 340));
             restaurantPanel.setMinimumSize(new Dimension(300, 340));
             restaurantPanel.setMaximumSize(new Dimension(300, 340));
@@ -225,33 +225,35 @@ public class HomePage extends JFrame {
         restAddress.setFont(new Font("", Font.BOLD, 15));
         restPricing.setFont(new Font("", Font.BOLD, 20));
 
+        //Checks if user is an admin or a regular user
+        if (user.getLevel() == 0 || user.getLevel() == 1) {
+            //Creates a panel dedicated to the edit button
+            JPanel editPanel = new JPanel(new BorderLayout());
+            editPanel.setBackground(new Color(245, 224, 130));
+            JMenuBar menuBar = new JMenuBar();
 
+            //Creates button to favourite restaurants
+            JMenuItem favButton = new JMenuItem("Fav");
+            menuBar.add(favButton);
+            favButton.addActionListener(e -> favRestaurant());
 
-        //Creates a panel dedicated to the edit button
-        JPanel editPanel = new JPanel(new BorderLayout());
-        editPanel.setBackground(new Color(245, 224, 130));
-        JMenuBar menuBar = new JMenuBar();
-        JMenuItem favButton = new JMenuItem("Fav");
-        menuBar.add(favButton);
-        favButton.addActionListener(e -> favRestaurant());
+            //if user is admin, adds update and delete buttons
+            if (user.getLevel() == 0) {
+                JMenu dotsButton = new JMenu("...");
+                JMenuItem updateButton = new JMenuItem("Update");
+                JMenuItem removeButton = new JMenuItem("Remove");
+                dotsButton.add(updateButton);
+                dotsButton.add(removeButton);
+                menuBar.add(dotsButton);
 
-        //If user is admin, adds edit and remove buttons
-        if (user.getLevel() == 0) {
-            //Creates a JMenu item and assigns to JMenuItem's to it: update and remove
-            JMenu dotsButton = new JMenu("...");
-            JMenuItem updateButton = new JMenuItem("Update");
-            JMenuItem removeButton = new JMenuItem("Remove");
-            dotsButton.add(updateButton);
-            dotsButton.add(removeButton);
-            menuBar.add(dotsButton);
-
-            //When clicked, the remove and update buttons will run their respective functions
-            removeButton.addActionListener(e -> removeRestaurant(restaurantPanel));
-            updateButton.addActionListener(e -> editRestaurant(restaurantPanel, description, tags));
+                //When clicked, the remove and update buttons will run their respective functions
+                removeButton.addActionListener(e -> removeRestaurant(restaurantPanel));
+                updateButton.addActionListener(e -> editRestaurant(restaurantPanel, description, tags));
+            }
+            //adds it to the right side of the panel
+            editPanel.add(menuBar, BorderLayout.LINE_END);
+            restaurantPanel.add(editPanel, BorderLayout.PAGE_START);
         }
-        //adds it to the right side of the panel
-        editPanel.add(menuBar, BorderLayout.LINE_END);
-        restaurantPanel.add(editPanel, BorderLayout.PAGE_START);
 
         //Creates panel for the details of the restaurant and adds the JLabels
         JPanel detailPanel = new JPanel();
