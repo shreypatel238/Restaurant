@@ -94,6 +94,14 @@ public class HomePage extends JFrame {
         menu.add(logOutButton);
         menu.add(Box.createHorizontalGlue());
 
+        JMenu filterButton = new JMenu("Filter");
+        filterButton.setMaximumSize(new Dimension(75, 30));
+        JMenuItem fastFood = new JMenuItem("Fast food");
+        JMenuItem dineIn = new JMenuItem("Dine in");
+        filterButton.add(fastFood);
+        filterButton.add(dineIn);
+        menu.add(filterButton);
+
         //Creates a search bar, sets size, and adds to menu
         JTextField searchBar = new JTextField("Search");
         searchBar.setPreferredSize(new Dimension(200, 30));
