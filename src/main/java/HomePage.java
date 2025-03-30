@@ -312,7 +312,15 @@ public class HomePage extends JFrame {
         JTextField addressField = new JTextField(20);
         JTextField pricingField = new JTextField(20);
         JTextField descriptionField = new JTextField();
-        JTextField tagsField = new JTextField();
+
+        String[] tags = {"Fastfood", "Dine-in", "Buffet", "Italian", "Japanese", "Mexican", "Indian", "Chinese", "Vegan", "Vegetarian", "Takeout", "Delivery"};
+        JComboBox<String> tagsBox = new JComboBox<>(tags);
+        JButton addTagButton = new JButton("Add");
+        JPanel tagsPanel = new JPanel(new FlowLayout());
+        ArrayList<String> tagsList = new ArrayList<>();
+        tagsPanel.add(tagsBox);
+        tagsPanel.add(addTagButton);
+
         String[] imagePath = {""};
 
         //Creates a panel for a dialog box and adds respective JLabels and textfields and buttons
@@ -325,8 +333,8 @@ public class HomePage extends JFrame {
         enterPanel.add(pricingField);
         enterPanel.add(new JLabel("Enter Restaurant Description:"));
         enterPanel.add(descriptionField);
-        enterPanel.add(new JLabel("Enter Tags (Ex. mexican takeout outdoors):"));
-        enterPanel.add(tagsField);
+        enterPanel.add(new JLabel("Select Tags:"));
+        enterPanel.add(tagsPanel);
         enterPanel.add(new JLabel("Select an image"));
         JButton selectButton = new JButton("Select");
 
@@ -363,6 +371,17 @@ public class HomePage extends JFrame {
         });
         enterPanel.add(selectButton);
 
+        addTagButton.addActionListener(e -> {
+            String tag = (String) tagsBox.getSelectedItem();
+            if (tag != null && !tag.trim().isEmpty() && !tagsList.contains(tag)) {
+                tagsList.add(tag);
+                JOptionPane.showMessageDialog(this, "Tag added");
+            } else if (tagsList.contains(tag)) {
+                JOptionPane.showMessageDialog(this, "Tag already added");
+            }
+        });
+
+
         //Creates JOptionPane containing the enterPanel
         int entered = JOptionPane.showConfirmDialog(this, enterPanel, "Enter Restaurant Information", JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
 
@@ -393,16 +412,6 @@ public class HomePage extends JFrame {
                 description = "No description provided";
             }
 //            description = description.replaceAll(",", " ");
-
-            String[] tags = tagsField.getText().trim().split(",");
-            ArrayList<String> tagsList = new ArrayList<>();
-            if (tags.length == 0) {
-                tagsList.add("No tags provided");
-            } else {
-                for (String x : tags) {
-                    tagsList.add(x);
-                }
-            }
 
             //adds data to the csv for future use
             backend.addData(name, address, pricing, imagePath[0], description, tagsList); //Add to CSV
@@ -457,7 +466,7 @@ public class HomePage extends JFrame {
 
         //If the user does not want to change the image, asks the user for the new value they want to set it to
         String newField = "";
-        if (!type.equals("image") && !type.equals("Image")) {
+        if (!type.equals("Image") && !type.equals("Tags")) {
             newField = JOptionPane.showInputDialog(this, "Enter new " + type);
             if (newField.equals("") || newField.trim().isEmpty()) {
                 JOptionPane.showMessageDialog(this, "You must enter something!");
@@ -550,11 +559,29 @@ public class HomePage extends JFrame {
                 imageLabel = new JLabel(icon);
                 imageLabel.putClientProperty("imagePath", "data/default-placeholder.png");
             }
-        } else if (type.equals("Description (DON'T WRITE COMMAS)")) {
+        } else if (type.equals("Description")) {
             backend.editData(oldName, false, oldName, oldAddress, oldPricing, oldPath, newField, tags);
-        } else if (type.equals("Tags (DON'T WRITE COMMAS, ONLY SPACES)")) {
-            String[] newTagsArray = newField.split(" ");
-            ArrayList<String> newTagsList = new ArrayList<>(Arrays.asList(newTagsArray));
+        } else if (type.equals("Tags")) {
+            String[] tagOptions = {"Fastfood", "Dine-in", "Buffet", "Italian", "Japanese", "Mexican", "Indian", "Chinese", "Vegan", "Vegetarian", "Takeout", "Delivery"};
+            JComboBox<String> tagsBox = new JComboBox<>(tagOptions);
+            JButton addTagButton = new JButton("Add");
+            JPanel tagsPanel = new JPanel(new FlowLayout());
+            ArrayList<String> newTagsList = new ArrayList<>();
+            tagsPanel.add(tagsBox);
+            tagsPanel.add(addTagButton);
+
+            addTagButton.addActionListener(e -> {
+                String tag = (String) tagsBox.getSelectedItem();
+                if (tag != null && !tag.trim().isEmpty() && !newTagsList.contains(tag)) {
+                    newTagsList.add(tag);
+                    JOptionPane.showMessageDialog(this, "Tag added");
+                } else if (newTagsList.contains(tag)) {
+                    JOptionPane.showMessageDialog(this, "Tag already added");
+                }
+            });
+
+            JOptionPane.showConfirmDialog(this, tagsPanel, "Select new tags", JOptionPane.OK_CANCEL_OPTION);
+
             backend.editData(oldName, false, oldName, oldAddress, oldPricing, oldPath, description, new ArrayList<>(newTagsList));
         }
         //recalculates and repaints screen
@@ -632,12 +659,16 @@ public class HomePage extends JFrame {
                 //if fails, sets placeholder image
                 JOptionPane.showMessageDialog(this, "Image load failed", "Error", JOptionPane.ERROR_MESSAGE);
                 ImageIcon icon = new ImageIcon("data/default-placeholder.png");
+                Image resized = icon.getImage().getScaledInstance(300, 200, Image.SCALE_SMOOTH);
+                icon = new ImageIcon(resized);
                 imageLabel = new JLabel(icon);
                 imageLabel.putClientProperty("imagePath", "data/default-placeholder.png");
             }
         } else {
             JOptionPane.showMessageDialog(this, "Image load failed", "Error", JOptionPane.ERROR_MESSAGE);
             ImageIcon icon = new ImageIcon("data/default-placeholder.png");
+            Image resized = icon.getImage().getScaledInstance(300, 200, Image.SCALE_SMOOTH);
+            icon = new ImageIcon(resized);
             imageLabel = new JLabel(icon);
             imageLabel.putClientProperty("imagePath", "data/default-placeholder.png");
         }
