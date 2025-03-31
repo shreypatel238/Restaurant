@@ -243,7 +243,7 @@ public class HomePage extends JFrame {
             //Creates button to favourite restaurants
             JMenuItem favButton = new JMenuItem("Fav");
             menuBar.add(favButton);
-            favButton.addActionListener(e -> favRestaurant());
+            favButton.addActionListener(e -> favRestaurant(name,address,pricing,image,description,tags));
 
             //if user is admin, adds update and delete buttons
             if (user.getLevel() == 0) {
@@ -691,7 +691,8 @@ public class HomePage extends JFrame {
         frame.setVisible(true);
     }
 
-    public void favRestaurant() {
+    public void favRestaurant(String name, String address, String pricing, File image, String description, ArrayList<String> tags) {
+        backend.addFavouriteResturant(name, address, pricing, image,description, tags);
     }
 
     public static void main(String[] args) {

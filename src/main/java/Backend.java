@@ -14,6 +14,7 @@ public class Backend {
 
     static ArrayList<Restaurant> data = new ArrayList<>();
     static ArrayList<Restaurant> altData = new ArrayList<>();
+    static ArrayList<Restaurant> favData = new ArrayList<>();
     static ArrayList<User> users = new ArrayList<>();
     static boolean loaded = false;
     String search = "";
@@ -154,7 +155,7 @@ public class Backend {
             BufferedWriter bw = new BufferedWriter(fw);
             data.forEach(item -> {
                 try {
-                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription().replace(",","~") + "," + parseTagsToString(item.getTags()) + "\n");
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription().replace(",","~") + "," + reformmatedTags(item.getTags()) + "\n");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -226,33 +227,13 @@ public class Backend {
         return tagList;
     }
 
-    private static String parseTagsToString(ArrayList<String> tags) {
-        String tagString = "";
-        for (String tag : tags) {
-            tagString += tag + ";";
-        }
-        return tagString;
-    }
-
-    // Add tag
-    public void addTag(String name, String tag) {
-        for (Restaurant item : data) {
-            if (item.getName().equals(name)) {
-                item.getTags().add(tag);
-                writeData(item);
-            }
-        };
-    }
-
-    // Remove tag
-    public void removeTag(String name, String tag) {
-        for (Restaurant item : data) {
-            if (item.getName().equals(name)) {
-                item.getTags().remove(tag);
-                writeData(item);
-            }
-        }
-    }
+//    private static String parseTagsToString(ArrayList<String> tags) {
+//        String tagString = "";
+//        for (String tag : tags) {
+//            tagString += tag + ";";
+//        }
+//        return tagString;
+//    }
 
     // Parse users file
     private void parseUser(String line) {
@@ -354,7 +335,7 @@ public class Backend {
             BufferedWriter bw = new BufferedWriter(fw);
             data.forEach(item -> {
                 try {
-                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription().replace(",", "~") + "," + parseTagsToString(item.getTags()) + "\n");
+                    bw.write(item.getName() + "," + item.getAddress() + "," + item.getPricing() + "," + item.getImagePath() + "," + item.getDescription().replace(",", "~") + "," + reformmatedTags(item.getTags()) + "\n");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -381,6 +362,8 @@ public class Backend {
                 }
 
                 else if(pricingcheck&&item.getPricing().contains(filter) && !altData.contains(item)) {
+                    altData.add(item);
+                }else if(item.getTags().contains(filter) && !altData.contains(item)) {
                     altData.add(item);
                 }
             }
@@ -451,6 +434,31 @@ public class Backend {
 
             }
             return text;
+        }
+    }
+    public void filterUsingTags(ArrayList<String> tags) {
+        altData.clear();
+        if(tags==null||tags.isEmpty()) {
+            return;
+        }
+        for (Restaurant item : data) {
+            for (String tag : tags) {
+                if (item.getTags().contains(tags) && altData.contains(item)) {
+                    altData.add(item);
+                }
+            }
+        }
+    }
+    //Given the request to add a resturant adds the resturant to fav data.
+    public void addFavouriteResturant(String name, String address, String pricing, File image, String description, ArrayList<String> tags){
+        for(Restaurant item : data){
+            if(item.getName().equals(name)&&item.getAddress().equals(address)){
+                if(item.getPricing().equals(pricing)&&item.getImagePath().equals(image.getPath())){
+                    if(item.getDescription().equals(description)){
+                        favData.add(item);};
+
+                }
+            }
         }
     }
 }
