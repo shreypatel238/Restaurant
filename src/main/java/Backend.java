@@ -11,10 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Backend {
-
     static ArrayList<Restaurant> data = new ArrayList<>();
     static ArrayList<Restaurant> altData = new ArrayList<>();
-    static ArrayList<Restaurant> favData = new ArrayList<>();
     static ArrayList<User> users = new ArrayList<>();
     static boolean loaded = false;
     String search = "";
@@ -449,14 +447,14 @@ public class Backend {
             }
         }
     }
-    //Given the request to add a resturant adds the resturant to fav data.
-    public void addFavouriteResturant(String name, String address, String pricing, File image, String description, ArrayList<String> tags){
-        for(Restaurant item : data){
-            if(item.getName().equals(name)&&item.getAddress().equals(address)){
-                if(item.getPricing().equals(pricing)&&item.getImagePath().equals(image.getPath())){
-                    if(item.getDescription().equals(description)){
-                        favData.add(item);};
-
+    //Given the request to add a restaurant adds the restaurant to fav data.
+    public void addFavouriteResturant(String username, String name, String address, String pricing, File image, String description, ArrayList<String> tags){
+        for(Restaurant item : data) {
+            if (item.getName().equals(name) && item.getAddress().equals(address)) {
+                for (User x : users) {
+                    if (x.getUsername().equals(username)) {
+                        x.getFavData().add(item);
+                    }
                 }
             }
         }

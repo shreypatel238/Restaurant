@@ -61,10 +61,51 @@ public class HomePage extends JFrame {
         menu = new JMenuBar();
         menu.setLayout(new BoxLayout(menu, BoxLayout.X_AXIS));
 
+        JMenuItem logOutButton = new JMenuItem("Log Out");
+        logOutButton.setMaximumSize(new Dimension(60, 30));
+        logOutButton.setPreferredSize(new Dimension(60, 30));
+
+        //Logs user out
+        logOutButton.addActionListener(e -> {
+            loggedIn = false;
+            user = null;
+            totalRestaurants = 0;
+            LoginPage loginPage = new LoginPage(backend, this);
+            loginPage.setVisible(true);
+            this.dispose();
+        });
+
+        JMenu filterButton = new JMenu("Filter");
+        filterButton.setMaximumSize(new Dimension(60, 30));
+        JMenuItem fastFood = new JMenuItem("Fast food");
+        JMenuItem dineIn = new JMenuItem("Dine in");
+        filterButton.add(fastFood);
+        filterButton.add(dineIn);
+
+        //Creates a search bar, sets size, and adds to menu
+        JTextField searchBar = new JTextField("Search");
+        searchBar.setPreferredSize(new Dimension(200, 30));
+        searchBar.setMinimumSize(new Dimension(200, 30));
+        searchBar.setMaximumSize(new Dimension(200, 30));
+        searchBar.setBorder(BorderFactory.createLineBorder(Color.black));
+
+        JMenuItem viewFavButton = new JMenuItem("View Favourite Restaurants");
+        viewFavButton.setMaximumSize(new Dimension(75, 30));
+
+        viewFavButton.addActionListener(e -> viewFavs());
+
+        menu.add(logOutButton);
+        menu.add(Box.createHorizontalGlue());
+        menu.add(filterButton);
+        menu.add(searchBar);
+        menu.add(Box.createHorizontalGlue());
+        menu.add(viewFavButton);
+
         //If user is admin, adds add restaurant button
         if (user.getLevel() == 0) {
             JMenuItem addButton = new JMenuItem("Add Restaurant");
-            addButton.setMaximumSize(new Dimension(125, 30));
+            addButton.setMaximumSize(new Dimension(100, 30));
+            addButton.setPreferredSize(new Dimension(100, 30));
             menu.add(addButton);
 
             //Adds functionality to the add restaurants button. Calls addRestaurant when pressed
@@ -77,38 +118,7 @@ public class HomePage extends JFrame {
             });
         }
 
-        JMenuItem logOutButton = new JMenuItem("Log Out");
-        logOutButton.setMaximumSize(new Dimension(75, 30));
 
-        //Logs user out
-        logOutButton.addActionListener(e -> {
-            loggedIn = false;
-            user = null;
-            totalRestaurants = 0;
-            LoginPage loginPage = new LoginPage(backend, this);
-            loginPage.setVisible(true);
-            this.dispose();
-        });
-
-        menu.add(logOutButton);
-        menu.add(Box.createHorizontalGlue());
-
-        JMenu filterButton = new JMenu("Filter");
-        filterButton.setMaximumSize(new Dimension(75, 30));
-        JMenuItem fastFood = new JMenuItem("Fast food");
-        JMenuItem dineIn = new JMenuItem("Dine in");
-        filterButton.add(fastFood);
-        filterButton.add(dineIn);
-        menu.add(filterButton);
-
-        //Creates a search bar, sets size, and adds to menu
-        JTextField searchBar = new JTextField("Search");
-        searchBar.setPreferredSize(new Dimension(200, 30));
-        searchBar.setMinimumSize(new Dimension(200, 30));
-        searchBar.setMaximumSize(new Dimension(200, 30));
-        searchBar.setBorder(BorderFactory.createLineBorder(Color.black));
-        menu.add(searchBar);
-        menu.add(Box.createHorizontalGlue());
 
         searchBar.addMouseListener(new MouseAdapter() {
             @Override
@@ -242,7 +252,7 @@ public class HomePage extends JFrame {
             //Creates button to favourite restaurants
             JMenuItem favButton = new JMenuItem("Fav");
             menuBar.add(favButton);
-            favButton.addActionListener(e -> favRestaurant(name,address,pricing,image,description,tags));
+            favButton.addActionListener(e -> favRestaurant(user.getUsername(), name,address,pricing,image,description,tags));
 
             //if user is admin, adds update and delete buttons
             if (user.getLevel() == 0) {
@@ -690,8 +700,35 @@ public class HomePage extends JFrame {
         frame.setVisible(true);
     }
 
-    public void favRestaurant(String name, String address, String pricing, File image, String description, ArrayList<String> tags) {
-        backend.addFavouriteResturant(name, address, pricing, image,description, tags);
+    public void favRestaurant(String username, String name, String address, String pricing, File image, String description, ArrayList<String> tags) {
+        boolean contains = false;
+        for (Restaurant y : user.getFavData()) {
+            if (y.getName().equals(name)) {
+                contains = true;
+            }
+        }
+        if (!contains) {
+            backend.addFavouriteResturant(username, name, address, pricing, image, description, tags);
+            JOptionPane.showMessageDialog(this, "Added to favourites");
+        } else {
+            JOptionPane.showMessageDialog(this, "Restaurant already in favourites");
+        }
+    }
+
+    public void viewFavs() {
+        JPanel panel = new JPanel();
+        panel.setPreferredSize(new Dimension(300, 150));
+
+        StringBuilder favRestaurants = new StringBuilder();
+        for (Restaurant x : user.getFavData()) {
+            favRestaurants.append(x.getName()).append(" ");
+        }
+        JLabel restaurants = new JLabel(favRestaurants.toString());
+        restaurants.setFont(new Font("", Font.BOLD, 20));
+
+        panel.add(restaurants);
+
+        JOptionPane.showMessageDialog(this, panel, "Favourites", JOptionPane.PLAIN_MESSAGE);
     }
 
     public static void main(String[] args) {
