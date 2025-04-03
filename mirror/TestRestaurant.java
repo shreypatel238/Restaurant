@@ -1,7 +1,7 @@
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 
-public class TestData {
+public class TestRestaurant {
 
     String testName = "McDonalds";
     String testAddress = "123 Sesame Street"; 
