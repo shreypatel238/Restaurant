@@ -251,6 +251,29 @@ public class Backend {
             User user = new User(username, password, level);
             users.add(user);
         }
+        if(args.length==4){
+            String username = args[0];
+            String password = args[1];
+            int level = Integer.parseInt(args[2]);
+
+            // Skipping invalid data entry
+            if (username == null || password == null) {
+                return;
+            }
+            String[] favourites = args[3].split("~");
+            ArrayList<Restaurant> favouriteList = new ArrayList<>();
+            for(Restaurant item: data){
+                for(String favourite: favourites){
+                    if(item.getName().equals(favourite)){
+                        favouriteList.add(item);
+                    }
+                }
+            }
+
+            // Username, password, level
+            User user = new User(username, password, level,favouriteList);
+            users.add(user);
+        }
     }
 
 
@@ -272,21 +295,27 @@ public class Backend {
     }
 
     // Updates the users file
-    private void updateUser() {
+    protected void updateUser() {
         try {
             FileWriter fw = new FileWriter("./users.csv", false);
             BufferedWriter bw = new BufferedWriter(fw);
             users.forEach(user -> {
                 try {
-                    bw.write(user.getUsername() + "," + user.getPassword() + "," + user.getLevel() + "\n");
+                    String favstring= " ";
+                    if (!user.getFavData().isEmpty()){
+                        for(Restaurant item : user.getFavData()){
+                            favstring+= item.getName()+"~";
+                        }
+                    }
+                    bw.write(user.getUsername() + "," + user.getPassword() + "," + user.getLevel() +"," + favstring  +"\n");
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    throw  new RuntimeException(e);
                 }
             });
             bw.close();
         }
         catch (IOException e) {
-            e.printStackTrace();
+            throw  new RuntimeException(e);
         }
     }
 
@@ -454,6 +483,7 @@ public class Backend {
                 for (User x : users) {
                     if (x.getUsername().equals(username)) {
                         x.getFavData().add(item);
+                        updateUser();
                     }
                 }
             }

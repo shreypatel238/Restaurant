@@ -17,7 +17,13 @@ public class User {
         this.password = password;
         this.level = level;
         this.favData = new ArrayList<>();
-    }   
+    }
+    public User(String username, String password, int level, ArrayList<Restaurant> favData) {
+        this.username = username;
+        this.password = password;
+        this.level = level;
+        this.favData = favData;
+    }
 
     public String getUsername() {
         return username;
