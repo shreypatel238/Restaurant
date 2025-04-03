@@ -22,7 +22,7 @@ public class Backend {
     public Backend(String path) {
         // Set backend file path on initialization
         this.path = path;
-        this.readUsers("./users.csv");
+        this.readUsers("./Restaurant/mirror/testUsers.csv");
     }
 
 
@@ -295,7 +295,7 @@ public class Backend {
     // Updates the users file
     private void updateUser() {
         try {
-            FileWriter fw = new FileWriter("./users.csv", false);
+            FileWriter fw = new FileWriter("./Restaurant/mirror/testUsers.csv", false);
             BufferedWriter bw = new BufferedWriter(fw);
             users.forEach(user -> {
                 try {
@@ -451,6 +451,31 @@ public class Backend {
 
             }
             return text;
+        }
+    }
+    public void filterUsingTags(ArrayList<String> tags) {
+        altData.clear();
+        if(tags==null||tags.isEmpty()) {
+            return;
+        }
+        for (Restaurant item : data) {
+            for (String tag : tags) {
+                if (item.getTags().contains(tags) && altData.contains(item)) {
+                    altData.add(item);
+                }
+            }
+        }
+    }
+    //Given the request to add a restaurant adds the restaurant to fav data.
+    public void addFavouriteResturant(String username, String name, String address, String pricing, File image, String description, ArrayList<String> tags){
+        for(Restaurant item : data) {
+            if (item.getName().equals(name) && item.getAddress().equals(address)) {
+                for (User x : users) {
+                    if (x.getUsername().equals(username)) {
+                        x.getFavData().add(item);
+                    }
+                }
+            }
         }
     }
 }
