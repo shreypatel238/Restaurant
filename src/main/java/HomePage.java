@@ -718,7 +718,7 @@ public class HomePage extends JFrame {
     public void viewFavs() {
         JPanel panel = new JPanel();
         panel.setPreferredSize(new Dimension(300, 150));
-
+        backend.updateUser();
         StringBuilder favRestaurants = new StringBuilder();
         for (Restaurant x : user.getFavData()) {
             favRestaurants.append(x.getName()).append(" ");
