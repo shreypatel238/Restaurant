@@ -214,7 +214,7 @@ public class Backend {
 
     // Parse tag lines from csv
     private static ArrayList<String> parseTags(String tags) {
-        String[] tagData = tags.split(" ");
+        String[] tagData = tags.split("");
         ArrayList<String> tagList = new ArrayList<>();
         for (String tag : tagData) {
             tag = tag.trim();
@@ -486,10 +486,10 @@ public class Backend {
                 for (User x : users) {
                     if (x.getUsername().equals(username)) {
                         x.getFavData().add(item);
-                        updateUser();
                     }
                 }
             }
         }
+        updateUser();
     }
 }

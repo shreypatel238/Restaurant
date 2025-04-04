@@ -1,6 +1,8 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import org.junit.*;
@@ -8,12 +10,18 @@ import org.junit.*;
 public class TestBackend {
     
     String testPath = "./Restaurant/mirror/testBackend.csv";
-    Restaurant testData1 = new Restaurant("McDonalds","100 Mc Way","$10-$20","image.png");
-    Restaurant testData2 = new Restaurant("Subway", "100 Sub Way","$10", "image.jpg");
     String testName = "McDonalds";
     String testAddress = "123 Sesame Street"; 
     String testPricing = "$10-$20";
     String testImagePath = "image.png";
+    String testDescription = "this restauraunt is being tested";
+    ArrayList<String> testTags = new ArrayList<>();
+    String testUsername = "John Doe";
+    String testPassword = "abc123";
+    Restaurant testData1 = new Restaurant("McDonalds","100 Mc Way","$10-$20","image.png", testDescription, testTags);
+    Restaurant testData2 = new Restaurant("Subway", "100 Sub Way","$10", "image.jpg", testDescription, testTags);
+    Restaurant testData3 = new Restaurant(testName, testAddress, testPricing, testImagePath, testDescription, testTags);
+
     
     // Tests that a "Backend" Object can be created using its parameterized constructor
     @Test
@@ -42,11 +50,11 @@ public class TestBackend {
     // Tests that when the "editData()" function is called, the changed values match what is expected
     @Test
     public void testBackendEditData() {
-        Restaurant expected = new Restaurant(testName, testAddress, testPricing, testImagePath);
+        Restaurant expected = new Restaurant(testName, testAddress, testPricing, testImagePath, testDescription, testTags);
 
         Backend backend = new Backend(testPath);
         backend.addData(testData1);
-        backend.editData(testData1.getName(), false, testName, testAddress, testPricing, testImagePath);
+        backend.editData(testData1.getName(), false, testName, testAddress, testPricing, testImagePath, testDescription, testTags);
         Restaurant actual = Backend.data.get(0);
 
         assertTrue(expected.getName().equals(actual.getName()));
@@ -66,5 +74,38 @@ public class TestBackend {
         backend.removeData(testData1.getName(), false);
 
         assertTrue(expected.equals(Backend.data));
+    }
+
+    // Tests the that a user can register for and successfully create an account and an existing username and password will fail
+    // when trying to create an account
+    @Test
+    public void testRegister() { // Need a way to remove users from test file
+        Backend backend = new Backend(testPath);
+        assertTrue(backend.register(testUsername, testPassword));
+        assertFalse(backend.register(testUsername, testPassword));
+    }
+
+    // Tests that a user not registered cannot login to an account while a registered user can
+    @Test
+    public void testLogin() {
+        Backend backend = new Backend(testPath);
+        assertFalse(backend.login(testUsername, testPassword));
+        backend.register(testUsername, testPassword);
+        assertTrue(backend.login(testUsername, testPassword));
+    }
+
+    // Tests that a restaurant added to a user's favourite list contains the expected data
+    @Test
+    public void testAddFavourite() {
+        Backend backend = new Backend(testPath);
+        backend.register(testUsername, testPassword);
+        backend.addData(testData3);
+        ArrayList<Restaurant> expectedFavData = new ArrayList<>();
+        expectedFavData.add(testData3);
+
+        backend.addFavouriteResturant(testUsername, testName, testAddress, testPricing, testImagePath, testDescription, testTags);
+        assertTrue(expectedFavData.equals(Backend.users.get(0).getFavData()));
+
+        backend.removeData(testName, false);
     }
 }
