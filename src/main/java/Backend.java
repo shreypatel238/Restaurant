@@ -436,16 +436,16 @@ public class Backend {
             return text;
         }
     }
-    public void filterUsingTags(ArrayList<String> tags) {
+    public void filterUsingTags(String tragetTag) {
         altData.clear();
-        if(tags==null||tags.isEmpty()) {
+        System.out.println(tragetTag);
+        if(tragetTag==null||tragetTag.isEmpty()) {
             return;
         }
         for (Restaurant item : data) {
-            for (String tag : tags) {
-                if (item.getTags().contains(tags) && altData.contains(item)) {
-                    altData.add(item);
-                }
+            if (item.getTags().contains(tragetTag) && !altData.contains(item)) {
+                System.out.println("added" + item.getName());
+                altData.add(item);
             }
         }
     }

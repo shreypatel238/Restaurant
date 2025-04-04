@@ -4,6 +4,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -22,6 +24,7 @@ public class HomePage extends JFrame {
     private String currentSearch;
     private boolean loggedIn = false;
     private User user = null;
+    private boolean filtering = false;
 
     public HomePage() {
         this.setTitle("Restaurant Catalog");
@@ -79,8 +82,111 @@ public class HomePage extends JFrame {
         filterButton.setMaximumSize(new Dimension(60, 30));
         JMenuItem fastFood = new JMenuItem("Fast food");
         JMenuItem dineIn = new JMenuItem("Dine in");
+        JMenuItem buffet = new JMenuItem("Buffet");
+        JMenuItem italian = new JMenuItem("Italian");
+        JMenuItem japanese = new JMenuItem("Japanese");
+        JMenuItem indian = new JMenuItem("Indian");
+        JMenuItem takeout = new JMenuItem("Takeout");
+        JMenuItem delivery = new JMenuItem("Delivery");
+        JMenuItem vegan = new JMenuItem("Vegan");
+        JMenuItem vegetarian = new JMenuItem("Vegetarian");
+        JMenuItem chinese = new JMenuItem("Chinese");
+        JMenuItem mexican = new JMenuItem("Mexican");
         filterButton.add(fastFood);
         filterButton.add(dineIn);
+        filterButton.add(buffet);
+        filterButton.add(italian);
+        filterButton.add(japanese);
+        filterButton.add(mexican);
+        filterButton.add(indian);
+        filterButton.add(chinese);
+        filterButton.add(vegan);
+        filterButton.add(vegetarian);
+        filterButton.add(takeout);
+        filterButton.add(delivery);
+
+        fastFood.addActionListener(f -> {
+            backend.filterUsingTags("Fastfood");
+            refreshPage();
+            panel.revalidate();
+            panel.repaint();
+            filtering= true;
+        });
+        dineIn.addActionListener(d -> {
+            backend.filterUsingTags("Dine-in");
+            refreshPage();
+            panel.revalidate();
+            panel.repaint();
+            filtering= true;
+        });
+        buffet.addActionListener(b -> {
+            backend.filterUsingTags(buffet.getText());
+            refreshPage();
+            panel.revalidate();
+            panel.repaint();
+            filtering= true;
+
+        });
+        italian.addActionListener(i -> {
+            backend.filterUsingTags(italian.getText());
+            refreshPage();
+            panel.revalidate();
+            panel.repaint();
+            filtering= true;
+        });
+        japanese.addActionListener(j -> {
+            backend.filterUsingTags(japanese.getText());
+            refreshPage();
+            panel.revalidate();
+            panel.repaint();
+            filtering= true;
+        });
+        indian.addActionListener(in -> {
+            backend.filterUsingTags(indian.getText());
+            refreshPage();
+            panel.revalidate();
+            panel.repaint();
+            filtering= true;
+        });
+        chinese.addActionListener(c -> {
+            backend.filterUsingTags(chinese.getText());
+            refreshPage();
+            panel.revalidate();
+            panel.repaint();
+            filtering= true;
+
+        });
+        vegan.addActionListener(v -> {
+            backend.filterUsingTags(vegan.getText());
+            refreshPage();
+            panel.revalidate();
+            panel.repaint();
+            filtering= true;
+        });
+        vegetarian.addActionListener(veg -> {
+            backend.filterUsingTags(vegan.getText());
+            refreshPage();
+            panel.revalidate();
+            panel.repaint();
+            filtering= true;
+
+        });
+        delivery.addActionListener(del -> {
+            backend.filterUsingTags(delivery.getText());
+            refreshPage();
+            panel.revalidate();
+            panel.repaint();
+            filtering= true;
+
+        });
+        takeout.addActionListener(t -> {
+            backend.filterUsingTags(takeout.getText());
+            refreshPage();
+            panel.revalidate();
+            panel.repaint();
+            filtering= true;
+
+        });
 
         //Creates a search bar, sets size, and adds to menu
         JTextField searchBar = new JTextField("Search");
@@ -88,7 +194,6 @@ public class HomePage extends JFrame {
         searchBar.setMinimumSize(new Dimension(200, 30));
         searchBar.setMaximumSize(new Dimension(200, 30));
         searchBar.setBorder(BorderFactory.createLineBorder(Color.black));
-
         JMenuItem viewFavButton = new JMenuItem("View Favourite Restaurants");
         viewFavButton.setMaximumSize(new Dimension(75, 30));
 
@@ -609,8 +714,15 @@ public class HomePage extends JFrame {
         //reloads all cards and displays them again
         if(!(backend.getAltData().isEmpty())&&(backend.getSearch().equals(currentSearch))) {
             backend.getAltData().forEach(item -> {
+                filtering = false;
                 createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()), item.getDescription(), item.getTags());
             });
+        }
+        else if(!(backend.getAltData().isEmpty())&&(filtering)){
+            backend.getAltData().forEach(item -> {
+                createCard(item.getName(), item.getAddress(), item.getPricing(), new File(item.getImagePath()), item.getDescription(), item.getTags());
+            });
+
         }
         else{
             backend.getData().forEach(item -> {
