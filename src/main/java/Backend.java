@@ -21,6 +21,7 @@ public class Backend {
     public Backend(String path) {
         // Set backend file path on initialization
         this.path = path;
+        getData();
         this.readUsers("./users.csv");
     }
 
@@ -270,7 +271,7 @@ public class Backend {
                 }
             }
 
-            // Username, password, level
+            // Username, password, level, and favourite list.
             User user = new User(username, password, level,favouriteList);
             users.add(user);
         }
@@ -301,13 +302,13 @@ public class Backend {
             BufferedWriter bw = new BufferedWriter(fw);
             users.forEach(user -> {
                 try {
-                    String favstring= " ";
+                    String favstring= "";
                     if (!user.getFavData().isEmpty()){
                         for(Restaurant item : user.getFavData()){
                             favstring+= item.getName()+"~";
                         }
                     }
-                    bw.write(user.getUsername() + "," + user.getPassword() + "," + user.getLevel() +"," + favstring  +"\n");
+                    bw.write(user.getUsername() + "," + user.getPassword() + "," + user.getLevel() +"," + favstring.trim()  +"\n");
                 } catch (IOException e) {
                     throw  new RuntimeException(e);
                 }
@@ -338,6 +339,8 @@ public class Backend {
     public boolean login(String user, String password) {
         for (User item : users) {
             if (item.getUsername().equals(user) && item.getPassword().equals(password)) {
+                users = new ArrayList<>();
+                readUsers("./users.csv");
                 return true;
             }
         }
