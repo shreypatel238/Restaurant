@@ -711,7 +711,8 @@ public class HomePage extends JFrame {
             backend.addFavouriteResturant(username, name, address, pricing, image, description, tags);
             JOptionPane.showMessageDialog(this, "Added to favourites");
         } else {
-            JOptionPane.showMessageDialog(this, "Restaurant already in favourites");
+            backend.addFavouriteResturant(username, name, address, pricing, image, description, tags);
+            JOptionPane.showMessageDialog(this, "Removed from favourites");
         }
     }
 
