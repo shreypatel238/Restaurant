@@ -66,7 +66,7 @@ public class HomePage extends JFrame {
 
         JMenuItem logOutButton = new JMenuItem("Log Out");
         logOutButton.setMaximumSize(new Dimension(60, 30));
-        logOutButton.setPreferredSize(new Dimension(60, 30));
+        //logOutButton.setPreferredSize(new Dimension(60, 30));
 
         //Logs user out
         logOutButton.addActionListener(e -> {
@@ -210,7 +210,7 @@ public class HomePage extends JFrame {
         if (user.getLevel() == 0) {
             JMenuItem addButton = new JMenuItem("Add Restaurant");
             addButton.setMaximumSize(new Dimension(100, 30));
-            addButton.setPreferredSize(new Dimension(100, 30));
+            //addButton.setPreferredSize(new Dimension(100, 30));
             menu.add(addButton);
 
             //Adds functionality to the add restaurants button. Calls addRestaurant when pressed
