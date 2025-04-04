@@ -718,15 +718,19 @@ public class HomePage extends JFrame {
 
     public void viewFavs() {
         JPanel panel = new JPanel();
-        panel.setPreferredSize(new Dimension(300, 150));
+        panel.setPreferredSize(new Dimension(400, 400));
+
         backend.updateUser();
         StringBuilder favRestaurants = new StringBuilder();
         for (Restaurant x : user.getFavData()) {
-            favRestaurants.append(x.getName()).append(" ");
+            favRestaurants.append(x.getName() + " " + x.getAddress()).append("\n");
         }
-        JLabel restaurants = new JLabel(favRestaurants.toString());
+        JTextArea restaurants = new JTextArea(favRestaurants.toString());
+        restaurants.setLineWrap(true);
+        restaurants.setWrapStyleWord(true);
+        restaurants.setEditable(false);
+        restaurants.setPreferredSize(new Dimension(400, 400));
         restaurants.setFont(new Font("", Font.BOLD, 20));
-
         panel.add(restaurants);
 
         JOptionPane.showMessageDialog(this, panel, "Favourites", JOptionPane.PLAIN_MESSAGE);
