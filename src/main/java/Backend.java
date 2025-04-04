@@ -21,6 +21,7 @@ public class Backend {
     public Backend(String path) {
         // Set backend file path on initialization
         this.path = path;
+        getData();
         this.readUsers("./users.csv");
     }
 
@@ -213,7 +214,7 @@ public class Backend {
 
     // Parse tag lines from csv
     private static ArrayList<String> parseTags(String tags) {
-        String[] tagData = tags.split(" ");
+        String[] tagData = tags.split("");
         ArrayList<String> tagList = new ArrayList<>();
         for (String tag : tagData) {
             tag = tag.trim();
@@ -301,7 +302,7 @@ public class Backend {
             BufferedWriter bw = new BufferedWriter(fw);
             users.forEach(user -> {
                 try {
-                    String favstring= " ";
+                    String favstring= "";
                     if (!user.getFavData().isEmpty()){
                         for(Restaurant item : user.getFavData()){
                             favstring+= item.getName()+"~";
@@ -483,10 +484,10 @@ public class Backend {
                 for (User x : users) {
                     if (x.getUsername().equals(username)) {
                         x.getFavData().add(item);
-                        updateUser();
                     }
                 }
             }
         }
+        updateUser();
     }
 }
