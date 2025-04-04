@@ -214,7 +214,7 @@ public class Backend {
 
     // Parse tag lines from csv
     private static ArrayList<String> parseTags(String tags) {
-        String[] tagData = tags.split("");
+        String[] tagData = tags.split("~");
         ArrayList<String> tagList = new ArrayList<>();
         for (String tag : tagData) {
             tag = tag.trim();
@@ -225,14 +225,6 @@ public class Backend {
         }
         return tagList;
     }
-
-//    private static String parseTagsToString(ArrayList<String> tags) {
-//        String tagString = "";
-//        for (String tag : tags) {
-//            tagString += tag + ";";
-//        }
-//        return tagString;
-//    }
 
     // Parse users file
     private void parseUser(String line) {
@@ -432,35 +424,13 @@ public class Backend {
         return search;
     }
 
-    // public static void main(String[] args) {
-    //     // Tag testing
-    //     ArrayList<String> tags = new ArrayList<String>();
-    //     tags.add("tag1");
-    //     tags.add("tag2");
-    //     tags.add("tag3");
-    //     tags.add("tag4");
-    //     tags.add("tag5");
-
-    //     // Restaurant testing
-    //     Restaurant resturant = new Restaurant("name", "address", "pricing", "imagePath", "Description", tags);
-    //     Backend backend = new Backend("./data.csv");
-    //     backend.addData(resturant);
-
-    //     // Tag retrieving
-    //     for (Restaurant item : backend.getData()) {
-    //         System.out.println(item.getName());
-    //         for (String tag : item.getTags()) {
-    //             System.out.print(tag + ";");
-    //         }
-    //     }
-    // }
     public String reformmatedTags(ArrayList<String> tags) {
         if(tags==null||tags.isEmpty()) {
             return "";
         }else{
             String text = "";
             for (String tag : tags) {
-                text += tag + " ";
+                text += tag.trim() + "~";
 
             }
             return text;

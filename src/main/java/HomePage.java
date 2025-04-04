@@ -642,7 +642,7 @@ public class HomePage extends JFrame {
         String tagString = "";
         for (String x : restaurant.getTags()) {
             System.out.println(x);
-            tagString += x + " ";
+            tagString += x + ",";
         }
         JLabel tagsLabel = new JLabel(tagString);
 
