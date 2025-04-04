@@ -455,7 +455,13 @@ public class Backend {
             if (item.getName().equals(name) && item.getAddress().equals(address)) {
                 for (User x : users) {
                     if (x.getUsername().equals(username)) {
-                        x.getFavData().add(item);
+                        //if restaurant is already favourited, then remove it
+                        ArrayList<Restaurant> data = x.getFavData();
+                        if (data.contains(item)) {
+                            x.getFavData().remove(item);
+                        } else {
+                            x.getFavData().add(item);
+                        }
                     }
                 }
             }
