@@ -32,6 +32,13 @@ This is just a summary on how to use. Please go to `docs/user/userdocs.md` for t
 5. If logged in, you can add restaurants to your favorite list
 6. Navigate a list of restaurants with a search bar, and a filter drop down tab
 
+## Deploy Final Product
+1. Download zip file Restaurant v1.0 from the releases tab on Github or click [here](https://github.com/shreypatel238/Restaurant/releases/tag/v1.0)
+   - You need to have Java installed on your computer
+2. Unzip the zip file
+3. Double click on the JAR file and the application will start running
+   -  You also launch it from the terminal by `java -jar Restaurant.java`
+
 ## Workflow
 1. `git pull` always before working
 2. `git add --all` then `git commit -m <MessageHere>` then `git push -u origin main` after working
