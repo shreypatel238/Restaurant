@@ -21,6 +21,8 @@ Our Code files consist of:
 - `User.java`
   - Class file to represent a user as a object
 
+**Note: The admin account is: User: admin, Password: pass**
+
 ## Build Instructions
 This is Java Project, it is recomended you use IntelliJ.
 
