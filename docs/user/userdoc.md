@@ -47,7 +47,7 @@ This document is meant for the user. We will go through the usage of the applica
 https://github.com/user-attachments/assets/53a4dbdb-2677-4e4d-9042-780f592041ae
 
 ## Installation Guide
-1. Download zip file Restaurant v1.0 from the releases tab on Github or click [here](https://github.com/shreypatel238/Restaurant/releases/tag/v1.0)
+1. Download zip file Restaurant v1.0 from the releases tab on Github or click [here](https://github.com/shreypatel238/Restaurant/releases/tag/v1.0) <br>
    **- Java must be installed on your computer**
 2. Unzip the zip file
 3. Double click on the JAR file and the application will start running
