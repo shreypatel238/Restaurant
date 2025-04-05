@@ -2,7 +2,7 @@
 Restaurant catalog software
 
 <p align="center">
-  <img src="docs/user/HomePage.png" alt="HomePage" width="100%" height="100%">
+  <img src="docs/user/Home.png" alt="HomePage" width="100%" height="100%">
 </p>
 
 ## Getting Started

@@ -2,7 +2,7 @@
 This document is meant for the user. We will go through the usage of the application, with a video walkthrough, as well as installation, and any sort of best practices.
 
 <p align="center">
-  <img src="HomePage.png" alt="HomePage" width="100%" height="100%">
+  <img src="Home.png" alt="HomePage" width="100%" height="100%">
   <em>Home Page of Restaurant Catalog, login as admin</em>
 </p>
 
@@ -19,7 +19,7 @@ This document is meant for the user. We will go through the usage of the applica
 
 2. Once logged in, you will be presented with the Home Page. From here you can browser the list of restaurant:
 <p align="center">
-  <img src="HomePage.png" alt="HomePage" width="60%" height="60%">
+  <img src="Home.png" alt="HomePage" width="60%" height="60%">
 </p>
 
 3. View Descriptions of restaurants by clicking on the "View Details" button on a restaurants:
