@@ -48,11 +48,11 @@ https://github.com/user-attachments/assets/53a4dbdb-2677-4e4d-9042-780f592041ae
 
 ## Installation Guide
 1. Download zip file Restaurant v1.0 from the releases tab on Github or click [here](https://github.com/shreypatel238/Restaurant/releases/tag/v1.0)
-   - You need to have Java installed on your computer
+   **- Java must be installed on your computer**
 2. Unzip the zip file
 3. Double click on the JAR file and the application will start running
    -  You also launch it from the terminal by `java -jar Restaurant.java`
 
 ## FAQ
-- *Why is scrolling and searching slow?*: The more data there is, the system has to process, give it a second and it should be work
+- *Why is scrolling and searching slow?*: The search function will slow depending on how much data is in the system. For scrolling, it is recommended to drag the scroll bar manually
 - *Why is there not much data?*: This restaurant catalog is meant for the admin to add more data in on top of already given data 
