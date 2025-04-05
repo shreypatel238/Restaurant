@@ -1,9 +1,7 @@
 # Restaurant
 Restaurant catalog software
 
-<p align="center">
-  <img src="docs/user/HomePage.png" alt="HomePage" width="100%" height="100%">
-</p>
+
 
 ## Getting Started
 For **User**: go to `docs/user/userdocs.md` or click [here](https://github.com/shreypatel238/Restaurant/blob/main/docs/user/userdoc.md).
