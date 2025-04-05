@@ -3,7 +3,7 @@ This document is meant for the user. We will go through the usage of the applica
 
 <p align="center">
   <img src="Home.png" alt="HomePage" width="100%" height="100%">
-  <em>Home Page of Restaurant Catalog, login as admin</em>
+  <em>Home Page of Restaurant Catalog, logged in as admin</em>
 </p>
 
 ## User Guide
