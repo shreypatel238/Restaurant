@@ -80,10 +80,12 @@ public class TestBackend {
     // Tests the that a user can register for and successfully create an account and an existing username and password will fail
     // when trying to create an account
     @Test
-    public void testRegister() { // Need a way to remove users from test file
+    public void testRegister() {
         Backend backend = new Backend(testPath);
         assertTrue(backend.register(testUsername, testPassword));
         assertFalse(backend.register(testUsername, testPassword));
+
+        Backend.users.remove(Backend.users.size()-1);
     }
 
     // Tests that a user not registered cannot login to an account while a registered user can
@@ -93,6 +95,8 @@ public class TestBackend {
         assertFalse(backend.login(testUsername2, testPassword2));
         backend.register(testUsername2, testPassword2);
         assertTrue(backend.login(testUsername2, testPassword2));
+
+        Backend.users.remove(Backend.users.size()-1);
     }
 
     // Tests that a restaurant added to a user's favourite list contains the expected data
@@ -106,8 +110,9 @@ public class TestBackend {
         expectedFavData.add(testData3);
 
         backend.addFavouriteResturant(testUsername, testName, testAddress, testPricing, testFile, testDescription, testTags);
-        assertTrue(expectedFavData.equals(Backend.users.get(0).getFavData()));
+        assertTrue(expectedFavData.equals(Backend.users.get(Backend.users.size()-1).getFavData()));
 
         backend.removeData(testName, false);
+        Backend.users.remove(Backend.users.size()-1);
     }
 }
