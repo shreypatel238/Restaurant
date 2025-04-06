@@ -60,3 +60,7 @@ https://github.com/user-attachments/assets/9d696862-4f84-4e1c-b132-f33c0ad6c22f
 https://github.com/user-attachments/assets/01457140-b3be-4b44-9d15-a64c232e184b
 
 ## Testing Instructions
+- Automated unit tests are run with JUnit through the "Test Runner for Java" extension available in VSCode.
+  - Requirements for the extension can be found here: https://marketplace.visualstudio.com/items?itemName=vscjava.vscode-java-test
+- Before testing ensure build is clean
+- To test, open the testing tab included with the "Test Runner for Java" extension and run tests from within
